@@ -1,0 +1,12 @@
+{
+  "printWidth": 140,
+  "semi": false,
+  "singleQuote": true,
+  "tslintIntegration": true,
+  "bracketSpacing": true,
+  "endOfLine": "auto",
+  "trailingComma": "es5",
+  "[vue]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
+}
