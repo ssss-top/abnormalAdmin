@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 
 const userApi = {
-  Login: '/auth/login',
+  Login: '/v1/user/login',
   Logout: '/au/logout',
   ForgePassword: '/auth/forge-password',
   Register: '/auth/register',
@@ -26,7 +26,7 @@ const userApi = {
  */
 export function login(parameter) {
   return request({
-    url: 'au/login',
+    url: '/v1/user/login',
     method: 'post',
     data: parameter
   })
@@ -526,7 +526,6 @@ function JsonToUrl(data) {
   for (var i in data) {
     var key = encodeURIComponent(i)
     var value = encodeURIComponent(data[i])
-    console.log(data[i], i)
     if (data[i] || data[i] === 0) {
       tempArr.push(key + '=' + value)
     }

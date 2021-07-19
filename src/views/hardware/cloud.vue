@@ -249,13 +249,11 @@ export default {
     setClustersIdlist() {
       const list = []
       this.clustersList.forEach(v => {
-        console.log(v, '56656')
         list.push(...(v.ClientID))
       })
       list.forEach(item => {
         this.clustersIdList.push({ label: item, value: item })
       })
-      console.log(this.clustersIdList, '9+9++9+9+9+9+9+9+')
       // const list = this.clustersList.find((v) => {
       //   return v.Name === this.clustersDefault // return v.value ===  '9'  返回undefined
       // }).ClientID
@@ -305,9 +303,8 @@ export default {
       }
       const ip = this.popupFormValue.IP.toString()
       this.popupFormValue.ip = ip
-      console.log(Array.from(new Set(list)), '5656565656')
       if (Array.from(new Set(list)).length > 1) {
-        this.$message.error('选择的数据当前集群不一致，请筛选后在批量')
+        this.$message.error('选择的数据当前节点不一致，请筛选后再操作')
       } else {
         this.popupFormValue.From = list[0]
 
@@ -324,7 +321,6 @@ export default {
       this.visible = false
     },
     restart() {
-      console.log(this.popupFormValue, '1515151')
       if (this.popupFormValue.IP.length > 0) {
         this.visible = true
       } else {
@@ -409,24 +405,24 @@ export default {
           key: 'IP',
           align: 'center'
         },
-        {
-          title: 'AddPiece最大数量',
-          dataIndex: 'AddPieceMaxSize',
-          key: 'AddPieceMaxSize',
-          align: 'center'
-        },
-        {
-          title: 'AddPiece增加步长',
-          dataIndex: 'AddPieceIncreaseSize',
-          key: 'AddPieceIncreaseSize',
-          align: 'center'
-        },
-        {
-          title: 'AddPiece初始数量',
-          dataIndex: 'AddPieceInitialSize',
-          key: 'AddPieceInitialSize',
-          align: 'center'
-        },
+        // {
+        //   title: 'AddPiece最大数量',
+        //   dataIndex: 'AddPieceMaxSize',
+        //   key: 'AddPieceMaxSize',
+        //   align: 'center'
+        // },
+        // {
+        //   title: 'AddPiece增加步长',
+        //   dataIndex: 'AddPieceIncreaseSize',
+        //   key: 'AddPieceIncreaseSize',
+        //   align: 'center'
+        // },
+        // {
+        //   title: 'AddPiece初始数量',
+        //   dataIndex: 'AddPieceInitialSize',
+        //   key: 'AddPieceInitialSize',
+        //   align: 'center'
+        // },
         {
           title: '最大扇区数量',
           dataIndex: 'SectorMaxSize',
@@ -559,7 +555,6 @@ export default {
     // 操作
     operation(e) {
       this.lookVisible = true
-      console.log(e, '4454554884488')
       this.lookData = e.Env
       // this.visible = true
       // const ip = e.IP.toString()

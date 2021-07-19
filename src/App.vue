@@ -19,7 +19,7 @@ export default {
       // 只是为了切换语言时，更新标题
       const { title } = this.$route.meta
       title && setDocumentTitle(`${i18nRender(title)} - ${domTitle}`)
-      console.log('this.$store.getters.lang', this.$store.getters.lang)
+      // console.log('this.$store.getters.lang', this.$store.getters.lang)
       return this.$i18n.getLocaleMessage(this.$store.getters.lang).antLocale
     }
   }

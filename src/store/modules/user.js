@@ -1,5 +1,5 @@
 import storage from 'store'
-import { login, getInfo, logout } from '@/api/login'
+import { login, getInfo } from '@/api/login'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 import { welcome } from '@/utils/util'
 
@@ -43,9 +43,10 @@ const user = {
       return new Promise((resolve, reject) => {
         login(userInfo).then(response => {
           console.log('Login_result', response)
+          console.log(response, '1222112121221212111212121221212')
           const result = response.data
-          if (result.code === 0 && result.Data && result.Data.Token) {
-            const token = result.Data.Token
+          if (result.code === 200 && result.data && result.data.token) {
+            const token = result.data.token
             storage.set(ACCESS_TOKEN, token, 7 * 24 * 60 * 60 * 1000)
             commit('SET_TOKEN', token)
             commit('SET_ACCOUNT', userInfo.user_name)
@@ -93,15 +94,16 @@ const user = {
     // 登出
     Logout({ commit, state }) {
       return new Promise((resolve) => {
-        logout(state.token).then(() => {
-          commit('SET_TOKEN', '')
-          commit('SET_ROLES', [])
-          storage.remove(ACCESS_TOKEN)
-          resolve()
-        }).catch(() => {
-          resolve()
-        }).finally(() => {
-        })
+        storage.remove(ACCESS_TOKEN)
+        // logout(state.token).then(() => {
+        //   commit('SET_TOKEN', '')
+        //   commit('SET_ROLES', [])
+        //   storage.remove(ACCESS_TOKEN)
+        //   resolve()
+        // }).catch(() => {
+        //   resolve()
+        // }).finally(() => {
+        // })
       })
     }
 

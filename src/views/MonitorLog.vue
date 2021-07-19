@@ -157,7 +157,6 @@ export default {
     handleChange(value) {
       this.clustersDefault = value
       this.getTableData()
-      console.log(value) // { key: "lucy", label: "Lucy (101)" }
     },
     // onSelectChange (selectedRowKeys, selectedRows) {
     //   // this.selectedRowKeys = selectedRowKeys
@@ -271,7 +270,6 @@ export default {
     },
     // 操作
     // operation (e) {
-    //   console.log(e, '66+6')
     // },
     // 获取表格数据
     getTableData() {
@@ -280,13 +278,11 @@ export default {
       alarmlogs(params, this.clustersDefault).then((res) => {
         this.loading = false
         const result = res.data
-        console.log(result, '56566566')
         if (result.code === 200) {
           this.tableData = result.data.alarm_logs
           this.pagination.total = result.data.total
           // for (let i = 0; i <= this.tableData.length; i++) {
           //   const item = this.tableData[i]
-          //   console.log(item.IP)
           // }
           // this.tags = []
         } else {
@@ -296,7 +292,6 @@ export default {
     },
     // 生成获取表格数据的请求参数
     generateParams() {
-      console.log(this.filter, '151551515151515')
       const params = {
         size: this.pagination.pageSize,
         page: this.pagination.current
@@ -340,7 +335,6 @@ export default {
         this.filter.end_at = this.moment(e.time[1]).format('YYYY-MM-DD HH:mm:ss')
       }
       this.pagination.current = 1
-      console.log(this.filter, '666666666')
       this.getTableData()
     }
   }

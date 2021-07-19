@@ -57,7 +57,7 @@ export default {
     }
   },
   mounted() {
-    console.log('this.$store.u', this.$store.state)
+    // console.log('this.$store.u', this.$store.state)
   }
 }
 </script>

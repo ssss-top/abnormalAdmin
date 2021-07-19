@@ -283,7 +283,6 @@ export default {
         this.confirmLoading = false
         this.initialValues = Object.assign({}, this.defaultValueForm, this.formValue)
         this.initialValues = Object.assign({}, this.formValue)
-        console.log(this.initialValues)
         this.form = this.$form.createForm(this, { name: 'baseFormPopup' })
       }
       if (this.formValue.logo) {
@@ -313,7 +312,6 @@ export default {
       )
     },
     emitEvent(eventName, v, item) {
-      console.log('go', eventName, v)
       if (!eventName) {
         return
       }
@@ -375,12 +373,10 @@ export default {
           this.confirmLoading = false
           return
         }
-        // console.log(values)
         const form = Object.assign({}, values)
         if (this.fileList.length !== 0) {
           form['uploadFileList'] = this.fileList
         }
-        console.log(form, 'form valus')
         this.$emit('ok', form)
         this.form.resetFields()
       })
@@ -390,7 +386,6 @@ export default {
       this.confirmLoading = false
     },
     inputWarn() {
-      console.log('input-on')
     }
   }
 

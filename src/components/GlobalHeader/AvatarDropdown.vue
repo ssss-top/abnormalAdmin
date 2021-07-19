@@ -30,7 +30,7 @@
 
 <script>
 import { Modal } from 'ant-design-vue'
-
+// import { ACCESS_TOKEN } from '@/store/mutation-types'
 export default {
   name: 'AvatarDropdown',
   props: {
@@ -58,10 +58,11 @@ export default {
           // return new Promise((resolve, reject) => {
           //   setTimeout(Math.random() > 0.5 ? resolve : reject, 1500)
           // }).catch(() => console.log('Oops errors!'))
-          console.log(this, '44545')
-          return this.$store.dispatch('Logout').then(() => {
-            this.$router.push({ name: 'login' })
-          })
+          localStorage['Access-Token'] = ''
+          this.$router.push({ name: 'login' })
+          // return this.$store.dispatch('Logout').then(() => {
+          //   this.$router.push({ name: 'login' })
+          // })
         },
         onCancel() {}
       })

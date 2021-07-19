@@ -162,7 +162,6 @@ export default {
             this.clustersList.push({ label: item.Name, value: item.Name, ClientID: item.ClientID })
           })
           // this.clustersList = data.data.clusters
-          console.log(this.clustersList, '+++++++++++++++++++++++++++')
           this.clustersDefault = this.clustersList[0].label
           this.getTableData()
         }
@@ -171,7 +170,6 @@ export default {
     handleChange(value) {
       this.clustersDefault = value
       this.getTableData()
-      console.log(value) // { key: "lucy", label: "Lucy (101)" }
     },
     onSelectChange(selectedRowKeys, selectedRows) {
       // this.selectedRowKeys = selectedRowKeys
@@ -205,11 +203,9 @@ export default {
         okType: 'danger',
         cancelText: '否',
         onOk() {
-          console.log('OK')
           what.setHardwareIssueSstatus()
         },
         onCancel() {
-          console.log('取消')
         }
       })
       // this.$refs.boxClient.openModal()
@@ -231,7 +227,6 @@ export default {
       }
 
       setHardwareIssue(from, url).then(res => {
-        console.log(res, '454545')
         const result = res.data
         if (result.code === 200) {
           this.$message.success('执行成功')
@@ -262,14 +257,19 @@ export default {
           key: 'status',
           type: 'select',
           placeholder: '请选择',
-          options: [{
-            label: '未处理',
-            value: 0
-          },
-          {
-            label: '已处理',
-            value: 1
-          }]
+          options: [
+            {
+              label: '全部',
+              value: ''
+            },
+            {
+              label: '未处理',
+              value: 0
+            },
+            {
+              label: '已处理',
+              value: 1
+            }]
         },
         {
           label: '类型',
@@ -373,7 +373,6 @@ export default {
     changeStatus(e) {
       const what = this
       this.changList = []
-      console.log(e, '66+6')
       // if(e.Status===0){
 
       // }
@@ -384,12 +383,10 @@ export default {
         okType: 'danger',
         cancelText: '否',
         onOk() {
-          console.log('OK')
           what.changList.push(e.ID)
           what.setHardwareIssueSstatus()
         },
         onCancel() {
-          console.log('取消')
         }
       })
     },
@@ -399,7 +396,6 @@ export default {
         Status: 1
       }
       setHardwareIssueSstatus(params).then(res => {
-        console.log(res, '1212')
         const result = res.data
         if (result.code === 200) {
           this.$message.success('执行成功')
@@ -474,11 +470,8 @@ export default {
       this.settingsinit()
       this.visible = true
       const ip = e.IP.toString()
-      console.log(e, '23232323')
       this.popupFormValue = e
       this.popupFormValue.ip = ip
-
-      // console.log(this.popupFormValue, '66+6')
     },
     settingsinit() {
       this.formPopupSetting = [
@@ -553,13 +546,11 @@ export default {
       hardwareIssues(params, this.clustersDefault).then((res) => {
         this.loading = false
         const result = res.data
-        console.log(result, '56566566')
         if (result.code === 200) {
           this.tableData = result.data.hardware_issues
           this.pagination.total = result.data.total
           // for (let i = 0; i <= this.tableData.length; i++) {
           //   const item = this.tableData[i]
-          //   console.log(item.IP)
           // }
           // this.tags = []
         } else {
@@ -569,7 +560,6 @@ export default {
     },
     // 生成获取表格数据的请求参数
     generateParams() {
-      console.log(this.filter, '151551515151515')
       const params = {
         size: this.pagination.pageSize,
         page: this.pagination.current
@@ -613,7 +603,6 @@ export default {
         this.filter.end_at = this.moment(e.time[1]).format('YYYY-MM-DD HH:mm:ss')
       }
       this.pagination.current = 1
-      console.log(this.filter, '666666666')
       this.getTableData()
     }
   }

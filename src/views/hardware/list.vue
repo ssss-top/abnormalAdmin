@@ -294,7 +294,7 @@ export default {
       const ip = this.popupFormValue.IP.toString()
       this.popupFormValue.ip = ip
       if (Array.from(new Set(list)).length > 1) {
-        this.$message.error('选择的数据当前集群不一致，请筛选后在批量')
+        this.$message.error('选择的数据当前节点不一致，请筛选后再操作')
         return false
       } else {
         this.popupFormValue.From = list[0]
@@ -310,7 +310,6 @@ export default {
       this.visible = false
     },
     restart() {
-      console.log(this.popupFormValue, '1515151')
       if (this.popupFormValue.IP.length > 0) {
         this.visible = true
       } else {
@@ -567,7 +566,6 @@ export default {
     // 操作
     details(e) {
       this.lookVisible = true
-      console.log(e, '4454554884488')
       this.lookData = e.Env
       // this.visible = true
       // const ip = e.IP.toString()

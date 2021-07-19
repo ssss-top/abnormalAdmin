@@ -15,7 +15,7 @@
       <a-form-item>
         <a-input
           v-decorator="[
-            'LoginAccount',
+            'Username',
             {
               rules: [
                 {
@@ -46,7 +46,7 @@
       <a-form-item>
         <a-input-password
           v-decorator="[
-            'LoginPassword',
+            'Password',
             {
               rules: [
                 {
@@ -220,12 +220,12 @@ export default {
       // })
       // storage.set(ACCESS_TOKEN, '2d6e2f6e8e5d6de5d4e54', 7 * 24 * 60 * 60 * 1000)
       // 延迟 1 秒显示欢迎信息
-      setTimeout(() => {
-        this.$notification.success({
-          message: '欢迎',
-          description: `${timeFix()}，欢迎回来`
-        })
-      }, 1000)
+      // setTimeout(() => {
+      //   this.$notification.success({
+      //     message: '欢迎',
+      //     description: `${timeFix()}，欢迎回来`
+      //   })
+      // }, 1000)
       e.preventDefault()
       const {
         form: { validateFields },
@@ -234,7 +234,7 @@ export default {
         Login
       } = this
       state.loginBtn = true
-      const validateFieldsKey = ['LoginAccount', 'LoginPassword']
+      const validateFieldsKey = ['Username', 'Password']
       validateFields(
         validateFieldsKey,
         {
@@ -242,7 +242,6 @@ export default {
         },
         (err, values) => {
           if (!err) {
-            console.log('login form', values)
             const loginParams = {
               ...values
             }
@@ -272,7 +271,6 @@ export default {
     },
     // 登录成功
     loginSuccess(res) {
-      console.log('登录成功', res)
       // check res.homePage define, set $router.push name res.homePage
       // Why not enter onComplete
       /*
@@ -295,19 +293,19 @@ export default {
         })
       }, 1000)
       this.isLoginError = false
-    }
+    },
     // // 登录失败
-    // requestFailed (err) {
-    //   console.log('登录失败', err)
-    //   this.isLoginError = true
-    //   const errMsg = err.msg || '请求出现错误，请稍后再试'
-    //   this.tabMessage = errMsg
-    //   this.$notification['error']({
-    //     message: '错误',
-    //     description: errMsg,
-    //     duration: 4
-    //   })
-    // }
+    requestFailed(err) {
+      console.log('登录失败', err)
+      this.isLoginError = true
+      const errMsg = err.msg || '请求出现错误，请稍后再试'
+      this.tabMessage = errMsg
+      this.$notification['error']({
+        message: '错误',
+        description: errMsg,
+        duration: 4
+      })
+    }
   }
 }
 </script>

@@ -66,7 +66,6 @@ export default {
   methods: {
     // 商户弹窗
     merchantClick(data) {
-      console.log(data, 'kk')
       // var dataT = {
       //   user_id: data
       // }

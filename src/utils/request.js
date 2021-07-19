@@ -14,7 +14,6 @@ const request = axios.create({
 
 // 异常拦截处理器
 const errorHandler = (error) => {
-  console.log(error, '*********************************')
   if (error.response) {
     const data = error.response.data
     // 从 localstorage 获取 token
@@ -25,7 +24,6 @@ const errorHandler = (error) => {
         description: data.message
       })
     }
-    console.log(data, '*********************************')
     if (error.response.status === 401 && !(data.result && data.result.isLogin)) {
       notification.error({
         message: '重新登录',
@@ -45,7 +43,6 @@ const errorHandler = (error) => {
 
 // request interceptor
 request.interceptors.request.use(config => {
-  console.log(config, '----------------------------')
   const token = storage.get(ACCESS_TOKEN)
   // 如果 token 存在
   // 让每个请求携带自定义 token 请根据实际情况自行修改
@@ -59,7 +56,6 @@ request.interceptors.request.use(config => {
 // response interceptor
 request.interceptors.response.use((response) => {
   // 登录状态失效，退出登录，引导用户重新登录
-  console.log(response, '16661616')
   const code = response.data.code
   if (code === 401) {
     notification.error({
