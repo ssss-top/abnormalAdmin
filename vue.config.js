@@ -13,7 +13,9 @@ function resolve(dir) {
 function getGitHash() {
   try {
     return GitRevision.version()
-  } catch (e) { }
+  } catch (e) {
+    console.log(e)
+  }
   return 'unknown'
 }
 
@@ -31,13 +33,13 @@ const assetsCDN = {
   // https://unpkg.com/browse/vue@2.6.10/
   js: [
     // '//cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.min.js',
-    'http://exchangejsresource.oss-cn-hangzhou.aliyuncs.com/vue.min.js',
+    'https://exchangejsresource.oss-cn-hangzhou.aliyuncs.com/vue.min.js',
     // '//cdn.jsdelivr.net/npm/vue-router@3.1.3/dist/vue-router.min.js',
-    'http://exchangejsresource.oss-cn-hangzhou.aliyuncs.com/vue-router.min.js',
+    'https://exchangejsresource.oss-cn-hangzhou.aliyuncs.com/vue-router.min.js',
     // '//cdn.jsdelivr.net/npm/vuex@3.1.1/dist/vuex.min.js',
-    'http://exchangejsresource.oss-cn-hangzhou.aliyuncs.com/vuex.min.js',
+    'https://exchangejsresource.oss-cn-hangzhou.aliyuncs.com/vuex.min.js',
     // '//cdn.jsdelivr.net/npm/axios@0.19.0/dist/axios.min.js'
-    'http://exchangejsresource.oss-cn-hangzhou.aliyuncs.com/axios.min.js'
+    'https://exchangejsresource.oss-cn-hangzhou.aliyuncs.com/axios.min.js'
   ]
 }
 

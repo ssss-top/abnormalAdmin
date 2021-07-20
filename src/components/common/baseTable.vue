@@ -26,8 +26,10 @@
           <!-- 插槽 -->
           <span v-else-if="col.slotName">
             <slot
+              :col="col"
               :name="col.slotName"
               :text="record[col.key]"
+              :listText="col.listKey?record[col.listKey]:''"
               :record="record"
               :index="index1"
             />

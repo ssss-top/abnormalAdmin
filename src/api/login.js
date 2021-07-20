@@ -162,6 +162,14 @@ export function machinesMigration(parameter) {
     data: parameter
   })
 }
+// 矿工列表
+export function minerList(parameter) {
+  const urlStr = JsonToUrl(parameter)
+  return request({
+    url: `/v1/miner_list?${urlStr}`,
+    method: 'get'
+  })
+}
 export function getInfo() {
   // return request({
   //   url: 'v1/admin/login',
@@ -526,7 +534,7 @@ function JsonToUrl(data) {
   for (var i in data) {
     var key = encodeURIComponent(i)
     var value = encodeURIComponent(data[i])
-    if (data[i] || data[i] === 0) {
+    if (data[i] || data[i] === 0 || data[i] === false) {
       tempArr.push(key + '=' + value)
     }
   }

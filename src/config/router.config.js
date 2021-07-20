@@ -53,6 +53,15 @@ export const asyncRouterMap = [
             meta: { title: '云硬件管理', keepAlive: true, permission: ['form'] }
           }
         ]
+      },
+      // 矿工列表
+      {
+        path: '/minerList',
+        name: 'minerList',
+        // redirect: '/dashboard/home',
+        // component: RouteView,
+        component: () => import('@/views/minerList'),
+        meta: { title: '矿工列表', keepAlive: true, icon: 'solution', permission: ['dashboard'] }
       }
       // 挖矿管理
       // {
