@@ -3,15 +3,19 @@
     <!-- 表格数据过滤器 -->
     <div class="card-list">
       <a-card title="矿机数量" style="min-width: 100%">
-        <p>矿工ID：{{ minerid }}</p>
-        <p v-for="(item,key,index) of machineCount" :key="index">
-          {{ key }}：{{ item }}
+        <p>矿工ID：{{ minerid }}
+          <a-tag color="blue" style="margin-left:10px">
+            {{ sectorSize }}G
+          </a-tag>
         </p>
+        <span v-for="(item,key,index) of machineCount" :key="index" style="margin-right:20px">
+          {{ key }}：{{ item }}
+        </span>
       </a-card>
       <!-- <a-card title="Default size card" style="min-width: 48%">
         <p />
       </a-card> -->
-      <a-card title="完成的任务数量" style="min-width: 48%;margin-top:20px">
+      <a-card title="任务数量" style="min-width: 48%;margin-top:20px">
         <!-- <a slot="extra" href="#">more</a> -->
         <a-range-picker slot="extra" @change="sectorsCountCheckout" />
         <div class="node-chart">
@@ -83,6 +87,7 @@ export default {
     return {
       // filterSettings: [],
       moment,
+      sectorSize: '',
       pagination: false,
       tableColumns: [],
       tableData: [],
@@ -358,19 +363,22 @@ export default {
             title: 'P1时长',
             dataIndex: 'P1Cost',
             key: 'P1Cost',
-            align: 'center'
+            align: 'center',
+            sorter: true
           },
           {
             title: 'P2时长',
             dataIndex: 'P2Cost',
             key: 'P2Cost',
-            align: 'center'
+            align: 'center',
+            sorter: true
           },
           {
             title: 'C2时长',
             dataIndex: 'C2Cost',
             key: 'C2Cost',
-            align: 'center'
+            align: 'center',
+            sorter: true
           },
           {
             title: 'P1数量(24h)',
@@ -414,25 +422,45 @@ export default {
     },
     // 排序
     tableChange(sorter) {
-      console.log(sorter, '222222222222222222222222222')
       if (sorter.order === 'descend') {
         this.sort.sort_order = 'Asc'
       } else if (sorter.order === 'ascend') {
         this.sort.sort_order = 'Desc'
+      } else {
+        this.sort.sort_order = ''
       }
       this.sort.sort_field = sorter.field
       if (this.mode === '0') {
         this.workerPower()
       }
     },
+    // 节点详情搜索
+    sectorsCountCheckout(e) {
+      const fromatStr = 'YYYY-MM-DD HH:mm:ss'
+      this.sectorsCountSearch = {
+        start_time: this.moment(e[0]).format(fromatStr),
+        end_time: this.moment(e[1]).format(fromatStr)
+      }
+      this.sectorsCount()
+    },
+    // 任务时长搜索
+    taskCostscheckout(e) {
+      const fromatStr = 'YYYY-MM-DD HH:mm:ss'
+      this.taskCostsSearch = {
+        start_time: this.moment(e[0]).format(fromatStr),
+        end_time: this.moment(e[1]).format(fromatStr)
+      }
+      this.taskCosts()
+    },
     // 获取每天完成的任务数量
     sectorsCount() {
+      this.sectorsCountList = []
       const params = {
-        minerid: this.minerid
+        minerid: this.minerid,
+        ...this.sectorsCountSearch
       }
       sectorsCount(params).then(res => {
         const result = res.data
-        console.log(result, '12121221212122221212')
         if (result.code === 200) {
           this.sectorsCountList = result.data.sectors_count
           this.$refs.chart_line_one.initChart(this.sectorsCountList[0].DateTime, this.sectorsCountList)
@@ -441,28 +469,16 @@ export default {
         }
       })
     },
-    sectorsCountCheckout(e) {
-      const fromatStr = 'YYYY-MM-DD HH:mm:ss'
-      this.taskCostsSearch = {
-        start_time: this.moment(e[0]).format(fromatStr),
-        end_time: this.moment(e).format(fromatStr)
-      }
-    },
-    taskCostscheckout(e) {
-      const fromatStr = 'YYYY-MM-DD HH:mm:ss'
-      this.taskCostsSearch = {
-        start_time: this.moment(e[0]).format(fromatStr),
-        end_time: this.moment(e).format(fromatStr)
-      }
-    },
+
     // 获取任务时长moment('00:00:01', 'HH:mm:ss')
     taskCosts() {
+      this.taskCostsList = []
       const params = {
-        minerid: this.minerid
+        minerid: this.minerid,
+        ...this.taskCostsSearch
       }
       taskCosts(params).then(res => {
         const result = res.data
-        console.log(result, '33333333333333333333')
         if (result.code === 200) {
           this.taskCostsList = result.data.task_costs
           this.$refs.chart_line_tow.initChart(this.taskCostsList[0].DateTime, this.taskCostsList)
@@ -475,10 +491,10 @@ export default {
     sectorsState() {
       sectorsState({ minerid: this.minerid }).then(res => {
         const result = res.data
-        console.log(result, '12121221212122221212')
         if (result.code === 200) {
           this.machineCount = result.data.machine_count
           this.sectorState = result.data.sector_state
+          this.sectorSize = result.data.sector_size
         } else {
           this.$message.error(result.msg)
         }

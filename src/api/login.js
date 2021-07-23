@@ -228,7 +228,7 @@ export function sectorsState(parameter) {
     method: 'get'
   })
 }
-// 获取节点详情信息
+// 获取每天完成的任务数量
 export function sectorsCount(parameter) {
   const urlStr = JsonToUrl(parameter)
   return request({
@@ -236,7 +236,7 @@ export function sectorsCount(parameter) {
     method: 'get'
   })
 }
-// 获取节点详情信息
+// 获取每天任务时长
 export function taskCosts(parameter) {
   const urlStr = JsonToUrl(parameter)
   return request({

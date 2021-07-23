@@ -397,7 +397,6 @@ export default {
     clusters() {
       clusters().then(res => {
         const data = res.data
-        console.log(data, '5656566')
         if (data.code === 200) {
           const list = data.data.clusters
           list.forEach(item => {
@@ -408,13 +407,12 @@ export default {
     },
     // 排序
     tableChange(sorter) {
-      // console.log(pagination)
-      // console.log(filters)
-      console.log(sorter, '222222222222222222222222222')
       if (sorter.order === 'descend') {
         this.sort.sort_order = 'Asc'
       } else if (sorter.order === 'ascend') {
         this.sort.sort_order = 'Desc'
+      } else {
+        this.sort.sort_order = ''
       }
       this.sort.sort_field = sorter.field
 
@@ -443,7 +441,6 @@ export default {
         } else {
           this.$message.error(result.msg)
         }
-        console.log(res, '69696969696996969')
       })
     },
 
@@ -460,14 +457,12 @@ export default {
       this.$router.push('/procedureCourse?minerid=' + e.Miner)
     },
     lookDeadline(value) {
-      console.log(value)
       const minerid = value.record.Miner
       // if (value.text > 0) {
       this.$router.push('/wdpostDeadlines?minerid=' + minerid)
       // }
     },
     lookError(value) {
-      console.log(value)
       this.minerid = value.record.Miner
       this.detilsLoading = true
       if (value.text > 0) {
@@ -483,7 +478,6 @@ export default {
       const params = this.generateParams()
       params.sort_field = this.sort.sort_field
       params.sort_order = this.sort.sort_order
-      console.log(params, '9*9*9*9')
       minerList(params).then((res) => {
         this.loading = false
         const result = res.data
