@@ -9,6 +9,7 @@
       :default-expand-all-rows="defaultExpandAllRows"
       :loading="loading"
       :row-selection="isSelectable&&{selectedRowKeys: selectedRowKeys, onChange: onSelectChange,getCheckboxProps: getCheckboxProps,onSelectAll:onSelectAll}"
+      @change="tableChange"
     >
       <template v-for="(col,index1) in columns" :slot="col.key" slot-scope="text,record">
         <div :key="col.key" :style="'color:'+col.textColor+(col.style||'')">
@@ -217,6 +218,8 @@
             </template>
             <span class="color-blue-deep cursor-pointer">{{ record.created_at }}</span>
           </a-popover>
+          <!-- moment(record.text).format('YYYY-MM-DD HH:mm:ss') -->
+          <span v-else-if="col.type==='formatTime'">{{ moment(record[col.key]).format(format) }}</span>
           <span v-else>
             <slot name="text-slot" :data="record" />
           </span>
@@ -243,7 +246,7 @@
 
 <script>
 import UserPopOver from './userInfoPopover'
-
+import * as moment from 'moment'
 export default {
   name: 'BaseTable',
   components: {
@@ -254,6 +257,11 @@ export default {
     id: {
       type: String,
       default: 'ID'
+    },
+    // 时间格式
+    format: {
+      type: String,
+      default: 'YYYY-MM-DD HH:mm:ss'
     },
     getCheckboxProps: {
       type: Function,
@@ -319,6 +327,7 @@ export default {
   },
   data() {
     return {
+      moment,
       current1: this.current,
       pageSize: 10,
       selectedRowKeys: []
@@ -342,12 +351,18 @@ export default {
     }
   },
   methods: {
+    // 表格过滤排序字段发生变化
+    tableChange(pagination, filters, sorter) {
+      console.log(sorter, '111111111111111111111111111111')
+      this.emitEvent('tableChange', sorter)
+    },
     // 选择表单项变化，会发事件
     //  selectedRowKeys 是 index 的数组，具体看情况处理(批量删除的)
     onSelectChange(selectedRowKeys, key) {
       this.selectedRowKeys = selectedRowKeys
       this.emitEvent('selectChange', selectedRowKeys, key)
     },
+    // 全选
     onSelectAll(selected, selectedRows, changeRows) {
       this.emitEvent('onSelectAll', selected, selectedRows, changeRows)
     },

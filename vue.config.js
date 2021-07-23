@@ -19,7 +19,7 @@ function getGitHash() {
   return 'unknown'
 }
 
-const isProd = process.env.NODE_ENV === 'production'
+const isProd = process.env.NODE_ENV === 'pro'
 
 const assetsCDN = {
   // webpack build externals

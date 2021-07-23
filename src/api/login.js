@@ -170,6 +170,106 @@ export function minerList(parameter) {
     method: 'get'
   })
 }
+
+// 爆块日志列表
+export function miningLogs(parameter) {
+  const urlStr = JsonToUrl(parameter)
+  return request({
+    url: `/v1/mining/logs?${urlStr}`,
+    method: 'get'
+  })
+}
+// 证明Deadline列表
+export function processes(parameter) {
+  const urlStr = JsonToUrl(parameter)
+  return request({
+    url: `/v1/processes?${urlStr}`,
+    method: 'get'
+  })
+}
+// 证明Deadline列表
+export function wdpostDeadlines(parameter) {
+  const urlStr = JsonToUrl(parameter)
+  return request({
+    url: `/v1/wdpost/deadlines?${urlStr}`,
+    method: 'get'
+  })
+}
+
+// 证明错误扇区列表v1/wdpost/faulty_sectors
+export function faultySectors(parameter) {
+  const urlStr = JsonToUrl(parameter)
+  return request({
+    url: `/v1/wdpost/faulty_sectors?${urlStr}`,
+    method: 'get'
+  })
+}
+// 证明错误扇区列表
+export function sealingState(parameter) {
+  const urlStr = JsonToUrl(parameter)
+  return request({
+    url: `/v1/statistic/sealing_state?${urlStr}`,
+    method: 'get'
+  })
+}
+// 机器列表
+export function workerList(parameter) {
+  const urlStr = JsonToUrl(parameter)
+  return request({
+    url: `/v1/statistic/worker_list?${urlStr}`,
+    method: 'get'
+  })
+}
+// 获取节点详情信息
+export function sectorsState(parameter) {
+  const urlStr = JsonToUrl(parameter)
+  return request({
+    url: `/v1/statistic/sectors_state?${urlStr}`,
+    method: 'get'
+  })
+}
+// 获取节点详情信息
+export function sectorsCount(parameter) {
+  const urlStr = JsonToUrl(parameter)
+  return request({
+    url: `/v1/statistic/sectors_count?${urlStr}`,
+    method: 'get'
+  })
+}
+// 获取节点详情信息
+export function taskCosts(parameter) {
+  const urlStr = JsonToUrl(parameter)
+  return request({
+    url: `/v1/statistic/task_costs?${urlStr}`,
+    method: 'get'
+  })
+}
+
+// Lotus信息列表
+export function lotusinfos(parameter) {
+  const urlStr = JsonToUrl(parameter)
+  return request({
+    url: `/v1/lotusinfos?${urlStr}`,
+    method: 'get'
+  })
+}
+// 爆块回溯列表
+export function backtracks(parameter) {
+  const urlStr = JsonToUrl(parameter)
+  return request({
+    url: `/v1/mining/backtracks?${urlStr}`,
+    method: 'get'
+  })
+}
+// 爆块回溯列表
+export function workerPower(parameter) {
+  const urlStr = JsonToUrl(parameter)
+  return request({
+    url: `/v1/statistic/worker_power?${urlStr}`,
+    method: 'get'
+  })
+}
+
 export function getInfo() {
   // return request({
   //   url: 'v1/admin/login',

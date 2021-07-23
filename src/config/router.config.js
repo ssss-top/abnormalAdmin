@@ -62,7 +62,61 @@ export const asyncRouterMap = [
         // component: RouteView,
         component: () => import('@/views/minerList'),
         meta: { title: '矿工列表', keepAlive: true, icon: 'solution', permission: ['dashboard'] }
+      },
+      // 证明Deadline列表
+      {
+        path: '/wdpostDeadlines',
+        name: 'wdpostDeadlines',
+        component: () => import('@/views/wdpostDeadlines'),
+        hidden: true,
+        meta: { title: '证明Deadline列表', keepAlive: false, icon: 'solution', permission: ['dashboard'] }
+      },
+      // 爆块日志列表
+      {
+        path: '/blockMininglog',
+        name: 'blockMininglog',
+        component: () => import('@/views/blockMininglog'),
+        hidden: true,
+        meta: { title: '爆块日志列表', keepAlive: false, icon: 'solution', permission: ['dashboard'] }
+      },
+      // 程序进程列表
+      {
+        path: '/procedureCourse',
+        name: 'procedureCourse',
+        component: () => import('@/views/procedureCourse'),
+        hidden: true,
+        meta: { title: '程序进程列表', keepAlive: false, icon: 'solution', permission: ['dashboard'] }
+      },
+      // 密封列表
+      {
+        path: '/sealingState',
+        name: 'sealingState',
+        component: () => import('@/views/sealingState'),
+        meta: { title: '密封列表', keepAlive: false, icon: 'solution', permission: ['dashboard'] }
+      },
+      // 节点详情
+      {
+        path: '/machine',
+        name: 'machine',
+        component: () => import('@/views/machine/index'),
+        hidden: true,
+        meta: { title: '节点详情', keepAlive: false, icon: 'solution', permission: ['dashboard'] }
+      },
+      // 爆块回溯列表
+      {
+        path: '/blastRecallList',
+        name: 'blastRecallList',
+        component: () => import('@/views/blastRecallList'),
+        meta: { title: '爆块回溯列表', keepAlive: false, icon: 'solution', permission: ['dashboard'] }
+      },
+      // 爆块回溯列表
+      {
+        path: '/lotusList',
+        name: 'lotusList',
+        component: () => import('@/views/lotusList'),
+        meta: { title: 'Lotus信息列表', keepAlive: false, icon: 'solution', permission: ['dashboard'] }
       }
+
       // 挖矿管理
       // {
       //   path: '/mining',

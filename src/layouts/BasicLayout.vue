@@ -48,7 +48,17 @@
     <template v-slot:footerRender>
       <!-- <global-footer /> -->
     </template>
-    <router-view />
+    <!-- <router-view /> -->
+    <a-layout-content
+      :style="{ height: '100%', margin: '10px 10px 0', paddingTop: settings.fixedHeader ? '64px' : '0' }"
+    >
+      <!-- 页签组件 -->
+      <!-- {{ settings }}1111111111 -->
+      <multi-tab v-if="settings.multiPage" />
+      <transition name="page-transition">
+        <router-view />
+      </transition>
+    </a-layout-content>
   </pro-layout>
 </template>
 
@@ -63,13 +73,14 @@ import RightContent from '@/components/GlobalHeader/RightContent'
 // import GlobalFooter from '@/components/GlobalFooter'
 import Ads from '@/components/Other/CarbonAds'
 import LogoSvg from '../assets/logo.svg?inline'
-
+import MultiTab from '@/components/MultiTab'
 export default {
   name: 'BasicLayout',
   components: {
     SettingDrawer,
     RightContent,
     // GlobalFooter,
+    MultiTab,
     LogoSvg,
     Ads
   },
@@ -91,12 +102,11 @@ export default {
         contentWidth: defaultSettings.layout === 'sidemenu' ? CONTENT_WIDTH_TYPE.Fluid : defaultSettings.contentWidth,
         // 主题 'dark' | 'light'
         theme: defaultSettings.navTheme,
-        // 主色调
         primaryColor: defaultSettings.primaryColor,
         fixedHeader: defaultSettings.fixedHeader,
         fixSiderbar: defaultSettings.fixSiderbar,
         colorWeak: defaultSettings.colorWeak,
-
+        multiPage: true,
         hideHintAlert: false,
         hideCopyButton: false
       },

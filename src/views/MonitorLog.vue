@@ -235,7 +235,9 @@ export default {
           title: '创建时间',
           dataIndex: 'CreatedAt',
           key: 'CreatedAt',
-          align: 'center'
+          align: 'center',
+          type: 'formatTime',
+          scopedSlots: { customRender: 'CreatedAt' }
         },
         {
           title: 'Msg',
