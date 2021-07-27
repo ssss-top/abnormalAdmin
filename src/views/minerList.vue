@@ -1,5 +1,17 @@
 <template>
   <page-header-wrapper>
+    <div style="padding:20px;background-color:white;margin-bottom:20px">
+      集群名称:
+      <a-select
+        v-model="clustersDefault"
+        style="width: 120px"
+        @change="handleChange"
+      >
+        <a-select-option v-for="(item,index) in clustersList" :key="index" :value="item.value">
+          {{ item.label }}
+        </a-select-option>
+      </a-select>
+    </div>
     <!-- 表格数据过滤器 -->
     <a-card size="small" :bordered="false">
       <table-filter :settings="filterSettings" @submit="filterTableData" />
@@ -35,6 +47,14 @@
           <span v-else>{{ record.text }} </span>
           <span slot="FaultCount" slot-scope="record" :class="record.text!==0?'red text':'green'" @click="lookError(record)">{{ record.text }}</span>
           <span slot="Miner" slot-scope="record" class="text" @click="lookDeadline(record)">{{ record.text }}</span>
+          <div slot="OrphanBlockCnt" slot-scope="record" style="min-width:90px">
+            <a-tag color="cyan">
+              {{ record.text['24h'] }}
+            </a-tag>
+            <a-tag color="blue">
+              {{ record.text['7d'] }}
+            </a-tag>
+          </div>
         </BaseTable>
       </div>
       <!-- 表格 结束 -->
@@ -49,6 +69,7 @@
           :current="paginationError.current"
           :fixed-width="true"
           :loading="detilsLoading"
+          :scroll="{type:1}"
           @pageChange="handleTableChangeDetils"
         >
         <!-- <span slot="title"></span> -->
@@ -68,6 +89,7 @@ export default {
   data() {
     return {
       filterSettings: [],
+      clustersDefault: '',
       filter: {},
       ableColumnsPopover: [],
       visible: false,
@@ -185,7 +207,7 @@ export default {
   },
   created() {
     this.initTable()
-    this.getTableData()
+    // this.getTableData()
     this.clusters()
   },
   methods: {
@@ -198,13 +220,13 @@ export default {
           placeholder: '请输入矿工ID',
           style: 'width:200px'
         },
-        {
-          label: '集群名称',
-          key: 'cluster',
-          type: 'select',
-          placeholder: '请选择',
-          options: this.clustersList
-        },
+        // {
+        //   label: '集群名称',
+        //   key: 'cluster',
+        //   type: 'select',
+        //   placeholder: '请选择',
+        //   options: this.clustersList
+        // },
         {
           label: '是否密封',
           key: 'sealing',
@@ -268,30 +290,31 @@ export default {
 
         {
           title: '幸运值（24h）',
-          dataIndex: 'LuckyValue24h',
-          key: 'LuckyValue24hStr',
+          dataIndex: 'LuckyValue24hStr',
+          key: 'LuckyValue24h',
           align: 'center',
           sorter: true,
-          scopedSlots: { customRender: 'LuckyValue24h' },
+          scopedSlots: { customRender: 'LuckyValue24hStr' },
           slotName: 'LuckyValue',
           listKey: 'OrphanBlock24h'
         },
         {
           title: '幸运值（7d）',
-          dataIndex: 'LuckyValue7d',
-          key: 'LuckyValue7dStr',
+          dataIndex: 'LuckyValue7dStr',
+          key: 'LuckyValue7d',
           align: 'center',
           sorter: true,
-          scopedSlots: { customRender: 'LuckyValue7d' },
+          scopedSlots: { customRender: 'LuckyValue7dStr' },
           slotName: 'LuckyValue',
           listKey: 'OrphanBlock7d'
         },
         {
           title: '幸运值（30d）',
-          dataIndex: 'LuckyValue30d',
-          key: 'LuckyValue30dStr',
+          dataIndex: 'LuckyValue30dStr',
+          key: 'LuckyValue30d',
           sorter: true,
           align: 'center'
+          // scopedSlots: { customRender: 'LuckyValue30dStr' }
         },
 
         {
@@ -304,26 +327,34 @@ export default {
         },
         {
           title: '有效算力',
-          dataIndex: 'RawPower',
-          key: 'RawPowerStr',
+          dataIndex: 'RawPowerStr',
+          key: 'RawPower',
           sorter: true,
-          align: 'center',
-          scopedSlots: { customRender: 'RawPower' }
+          align: 'center'
+          // scopedSlots: { customRender: 'RawPowerStr' }
         },
         {
           title: '新增算力',
-          dataIndex: 'PowerGrowth',
-          key: 'PowerGrowthStr',
+          dataIndex: 'PowerGrowthStr',
+          key: 'PowerGrowth',
           align: 'center',
-          sorter: true,
-          scopedSlots: { customRender: 'PowerGrowth' }
+          sorter: true
+          // scopedSlots: { customRender: 'PowerGrowthStr' }
         }, {
           title: '增量算力',
-          dataIndex: 'PowerDelta',
-          key: 'PowerDeltaStr',
+          dataIndex: 'PowerDeltaStr',
+          key: 'PowerDelta',
           align: 'center',
-          sorter: true,
-          scopedSlots: { customRender: 'PowerDelta' }
+          sorter: true
+          // scopedSlots: { customRender: 'PowerDeltaStr' }
+        },
+        {
+          title: '孤块(24H/7D)',
+          dataIndex: 'OrphanBlockCnt',
+          key: 'OrphanBlockCnt',
+          align: 'center',
+          scopedSlots: { customRender: 'OrphanBlockCnt' },
+          slotName: 'OrphanBlockCnt'
         },
         {
           title: '错误证明',
@@ -370,9 +401,8 @@ export default {
           dataIndex: 'operate',
           align: 'center',
           key: 'operate',
-          style: 'width:100px',
           scopedSlots: { customRender: 'operate' },
-          width: '10%',
+          width: '13%',
           buttons: [
             {
               label: '爆块日志',
@@ -392,29 +422,37 @@ export default {
 
       ]
     },
-
+    // 切换集群
+    handleChange(value) {
+      this.clustersDefault = value
+      this.getTableData()
+    },
     // 列表
     clusters() {
       clusters().then(res => {
         const data = res.data
         if (data.code === 200) {
-          const list = data.data.clusters
-          list.forEach(item => {
-            this.clustersList.push({ label: item.Name, value: item.Name })
+          this.clustersList = []
+          data.data.clusters.forEach(item => {
+            this.clustersList.push({ label: item.Name, value: item.Name, ClientID: item.ClientID })
           })
+          // this.clustersList = data.data.clusters
+          this.clustersDefault = this.clustersList[0].label
+          this.getTableData()
         }
       })
     },
     // 排序
     tableChange(sorter) {
+      console.log(sorter, '121211')
       if (sorter.order === 'descend') {
-        this.sort.sort_order = 'Asc'
-      } else if (sorter.order === 'ascend') {
         this.sort.sort_order = 'Desc'
+      } else if (sorter.order === 'ascend') {
+        this.sort.sort_order = 'Asc'
       } else {
         this.sort.sort_order = ''
       }
-      this.sort.sort_field = sorter.field
+      this.sort.sort_field = sorter.columnKey
 
       this.getTableData()
     },
@@ -459,7 +497,7 @@ export default {
     lookDeadline(value) {
       const minerid = value.record.Miner
       // if (value.text > 0) {
-      this.$router.push('/wdpostDeadlines?minerid=' + minerid)
+      this.$router.push('/machine?minerid=' + minerid)
       // }
     },
     lookError(value) {
@@ -476,6 +514,7 @@ export default {
       if (this.loading === true) return
       this.loading = true
       const params = this.generateParams()
+      params.cluster = this.clustersDefault
       params.sort_field = this.sort.sort_field
       params.sort_order = this.sort.sort_order
       minerList(params).then((res) => {

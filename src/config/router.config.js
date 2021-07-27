@@ -12,7 +12,7 @@ export const asyncRouterMap = [
     path: '/',
     name: 'index',
     component: BasicLayout,
-    meta: { title: '主页' },
+    meta: { title: '管理后台' },
     redirect: '/MonitorLog',
     children: [
       // bzz盒子列表
@@ -31,14 +31,14 @@ export const asyncRouterMap = [
         // redirect: '/dashboard/home',
         // component: RouteView,
         component: () => import('@/views/issuesList'),
-        meta: { title: '硬件问题列表', keepAlive: true, icon: 'solution', permission: ['dashboard'] }
+        meta: { title: '硬件问题列表', keepAlive: true, icon: 'alert', permission: ['dashboard'] }
       },
       // 会员管理
       {
         path: '/hardware',
         redirect: '/hardware/list',
         component: RouteView,
-        meta: { title: '硬件管理', icon: 'usergroup-add', permission: ['form'] },
+        meta: { title: '硬件管理', icon: 'solution', permission: ['form'] },
         children: [
           {
             path: '/hardware/list',
@@ -61,7 +61,7 @@ export const asyncRouterMap = [
         // redirect: '/dashboard/home',
         // component: RouteView,
         component: () => import('@/views/minerList'),
-        meta: { title: '矿工列表', keepAlive: true, icon: 'solution', permission: ['dashboard'] }
+        meta: { title: '矿工列表', keepAlive: true, icon: 'contacts', permission: ['dashboard'] }
       },
       // 证明Deadline列表
       {
@@ -92,7 +92,7 @@ export const asyncRouterMap = [
         path: '/sealingState',
         name: 'sealingState',
         component: () => import('@/views/sealingState'),
-        meta: { title: '密封列表', keepAlive: false, icon: 'solution', permission: ['dashboard'] }
+        meta: { title: '密封列表', keepAlive: false, icon: 'file-zip', permission: ['dashboard'] }
       },
       // 节点详情
       {
@@ -100,21 +100,41 @@ export const asyncRouterMap = [
         name: 'machine',
         component: () => import('@/views/machine/index'),
         hidden: true,
-        meta: { title: '节点详情', keepAlive: false, icon: 'solution', permission: ['dashboard'] }
+        meta: { title: '节点详情' }
       },
+      // 机器扇区列表
+      // {
+      //   path: '/workerSectors',
+      //   name: 'workerSectors',
+      //   component: () => import('@/views/workerSectors'),
+      //   hidden: true,
+      //   meta: { title: '机器扇区列表' }
+      // },
       // 爆块回溯列表
       {
         path: '/blastRecallList',
         name: 'blastRecallList',
         component: () => import('@/views/blastRecallList'),
-        meta: { title: '爆块回溯列表', keepAlive: false, icon: 'solution', permission: ['dashboard'] }
+        meta: { title: '爆块回溯列表', keepAlive: false, icon: 'to-top', permission: ['dashboard'] }
       },
       // 爆块回溯列表
       {
         path: '/lotusList',
         name: 'lotusList',
         component: () => import('@/views/lotusList'),
-        meta: { title: 'Lotus信息列表', keepAlive: false, icon: 'solution', permission: ['dashboard'] }
+        meta: { title: 'Lotus信息列表', keepAlive: false, icon: 'usergroup-add', permission: ['dashboard'] }
+      },
+      {
+        path: '/migrationTask',
+        name: 'migrationTask',
+        component: () => import('@/views/migrationTask'),
+        meta: { title: '迁移任务列表', keepAlive: false, icon: 'branches', permission: ['dashboard'] }
+      },
+      {
+        path: '/storeMachine',
+        name: 'storeMachine',
+        component: () => import('@/views/storeMachine'),
+        meta: { title: '存储机列表', keepAlive: false, icon: 'branches', permission: ['dashboard'] }
       }
 
       // 挖矿管理

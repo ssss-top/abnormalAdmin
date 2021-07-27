@@ -5,7 +5,7 @@
       :data-source="data"
       :row-key="(record, index) => record[id] || index"
       :pagination="false"
-      :scroll="getScroll()"
+      :scroll="scroll.type!==1?getScroll():{}"
       :default-expand-all-rows="defaultExpandAllRows"
       :loading="loading"
       :row-selection="isSelectable&&{selectedRowKeys: selectedRowKeys, onChange: onSelectChange,getCheckboxProps: getCheckboxProps,onSelectAll:onSelectAll}"
@@ -258,6 +258,13 @@ export default {
       type: String,
       default: 'ID'
     },
+    scroll: {
+      type: Object,
+      default: function() {
+        return {}
+      }
+    },
+
     // 时间格式
     format: {
       type: String,
@@ -353,7 +360,7 @@ export default {
   methods: {
     // 表格过滤排序字段发生变化
     tableChange(pagination, filters, sorter) {
-      console.log(sorter, '111111111111111111111111111111')
+      // console.log(sorter, '111111111111111111111111111111')
       this.emitEvent('tableChange', sorter)
     },
     // 选择表单项变化，会发事件
@@ -516,7 +523,7 @@ export default {
     // 固定表头的配置
     getScroll() {
       const screenWidth = document.body.offsetWidth
-      const width = screenWidth - 300
+      const width = screenWidth - 350
       if (!this.ifFixedHeader && this.fixedWidth) {
         return { x: width }
       }

@@ -269,6 +269,65 @@ export function workerPower(parameter) {
     method: 'get'
   })
 }
+// 爆块回溯列表
+export function workerSectors(parameter) {
+  const urlStr = JsonToUrl(parameter)
+  return request({
+    url: `/v1/statistic/worker_sectors?${urlStr}`,
+    method: 'get'
+  })
+}
+
+// 爆块回溯列表
+export function machineIp(parameter) {
+  const urlStr = JsonToUrl(parameter)
+  return request({
+    url: `/v1/statistic/machine?${urlStr}`,
+    method: 'get'
+  })
+}
+// 获取脚本
+export function sectorsCommands(parameter) {
+  return request({
+    url: `/v1/statistic/sectors_commands`,
+    method: 'post',
+    data: parameter
+  })
+}
+// 迁移任务列表/v1/sector/migrate_tasks
+
+export function migrateTasks(parameter) {
+  const urlStr = JsonToUrl(parameter)
+  return request({
+    url: `/v1/sector/migrate_tasks?${urlStr}`,
+    method: 'get'
+  })
+}
+// 迁移任务列表/v1/sector/migrate_tasks
+export function storeMachines(parameter) {
+  const urlStr = JsonToUrl(parameter)
+  return request({
+    url: `/v1/store_machines?${urlStr}`,
+    method: 'get'
+  })
+}
+// 获取扇区列表
+export function minerSectors(parameter) {
+  const urlStr = JsonToUrl(parameter)
+  return request({
+    url: `/v1/statistic/miner_sectors?${urlStr}`,
+    method: 'get'
+  })
+}
+
+// 获取扇区列表
+export function minerSectorsTypes(parameter) {
+  const urlStr = JsonToUrl(parameter)
+  return request({
+    url: `/v1/statistic/miner_sectors_types?${urlStr}`,
+    method: 'get'
+  })
+}
 
 export function getInfo() {
   // return request({
