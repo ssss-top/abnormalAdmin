@@ -3,34 +3,35 @@
     <!-- 表格数据过滤器 -->
     <div class="card-list">
       <a-card title="矿机数量" style="min-width: 100%">
-        <p>矿工ID：{{ minerid }}
-          <a-tag color="blue" style="margin-left:10px">
-            {{ sectorSize }}G
-          </a-tag>
+        <p>
+          矿工ID：{{ minerid }}
+          <a-tag color="blue" style="margin-left: 10px"> {{ sectorSize }}G </a-tag>
         </p>
-        <span v-for="(item,key,index) of machineCount" :key="index" style="margin-right:20px">
-          {{ key }}：{{ item }}
-        </span>
+        <span v-for="(item, key) of machineCount" :key="key" style="margin-right: 20px"> {{ key }}：{{ item }} </span>
+        <p style="margin-top: 10px">迁移任务统计</p>
+        <span v-for="(item, key) of MigrationCount" :key="key" style="margin-right: 20px"> {{ key }}：{{ item }} </span>
+        <p style="margin-top: 10px">存储机统计</p>
+        <span v-for="(item, key) of StoreMachineCount" :key="key" style="margin-right: 20px"> {{ key }}：{{ item }} </span>
       </a-card>
       <!-- <a-card title="Default size card" style="min-width: 48%">
         <p />
       </a-card> -->
-      <a-card title="任务数量" style="min-width: 48%;margin-top:20px">
+      <a-card title="任务数量" style="min-width: 48%; margin-top: 20px">
         <!-- <a slot="extra" href="#">more</a> -->
         <a-range-picker slot="extra" @change="sectorsCountCheckout" />
         <div class="node-chart">
           <Chart id="echartNum" ref="chart_line_one" />
         </div>
       </a-card>
-      <a-card title="任务时长" style="min-width: 48%;margin-top:20px">
+      <a-card title="任务时长" style="min-width: 48%; margin-top: 20px">
         <a-range-picker slot="extra" @change="taskCostscheckout" />
         <div class="node-chart">
           <Chart id="echar:ime" ref="chart_line_tow" />
         </div>
       </a-card>
-      <a-card title="节点详情" style="min-width: 100%;margin-top:20px">
+      <a-card title="节点详情" style="min-width: 100%; margin-top: 20px">
         <div class="node-detail">
-          <p v-for="(item,index) in sectorState" :key="index" class="detail-item">{{ item }}</p>
+          <p v-for="(item, index) in sectorState" :key="index" class="detail-item">{{ item }}</p>
         </div>
       </a-card>
     </div>
@@ -41,31 +42,25 @@
       <div style="margin-top: 20px">
         <div>
           <a-radio-group v-model="mode" :style="{ marginBottom: '8px' }" @change="listChange">
-            <a-radio-button value="0">
-              机器算力
-            </a-radio-button>
-            <a-radio-button value="1">
-              任务列表
-            </a-radio-button>
-            <a-radio-button value="2">
-              Deadline
-            </a-radio-button>
-            <a-radio-button value="3">
-              扇区列表
-            </a-radio-button>
+            <a-radio-button value="0"> 机器算力 </a-radio-button>
+            <a-radio-button value="1"> 任务列表 </a-radio-button>
+            <a-radio-button value="2"> Deadline </a-radio-button>
+            <a-radio-button value="3"> 扇区列表 </a-radio-button>
+            <a-radio-button value="4"> 迁移任务 </a-radio-button>
+            <a-radio-button value="5"> 存储机列表 </a-radio-button>
           </a-radio-group>
 
-          <table-filter v-if="visibleFilter" style="float:right;margin-bottom: 8px;" :settings="filterSettings" @submit="filterTableData">
-            <div v-if="mode==='3'">
+          <table-filter v-if="visibleFilter" style="float: right; margin-bottom: 8px" :settings="filterSettings" @submit="filterTableData">
+            <div v-if="mode === '3'">
               <a-button type="primary" @click="restart">重试</a-button>
-              <a-button type="primary" style="margin-left:20px" @click="remove">删除</a-button>
+              <a-button type="primary" style="margin-left: 20px" @click="remove">删除</a-button>
             </div>
           </table-filter>
-
         </div>
         <!-- 表格 开始 -->
         <BaseTable
-          ref="table"
+          :id="'Number'"
+          ref="tableMain"
           :columns="tableColumns"
           :data="tableData"
           class="page-base-table"
@@ -82,19 +77,22 @@
           @operateDetial="operateDetial"
           @signError="signError"
         >
-          <span slot="text" slot-scope="record" :class="record.record.IsCurrent===true?'red':''">{{ record.text }}</span>
-          <span slot="IP" slot-scope="record" style="text-decoration:underline;cursor: pointer;" @click="showIp(record)">{{ record.text }}</span>
+          <span slot="text" slot-scope="record" :class="record.record.IsCurrent === true ? 'red' : ''">{{ record.text }}</span>
+          <span slot="IP" slot-scope="record" style="text-decoration: underline; cursor: pointer" @click="showIp(record)">{{
+            record.text
+          }}</span>
+          <!-- slotName: 'toFixed' -->
+          <span slot="toFixed" slot-scope="record">{{ record.text?Number(record.text).toFixed(2):'0' }}</span>
         </BaseTable>
       </div>
-
     </a-card>
     <a-modal v-model="visible" title="错误扇区列表" ok-text="确认" cancel-text="关闭" width="50%" :footer="null">
       <p>
         <a-button type="primary" @click="restart">重试</a-button>
-        <a-button type="primary" style="margin-left:20px" @click="remove">删除</a-button>
+        <a-button type="primary" style="margin-left: 20px" @click="remove">删除</a-button>
         <!-- <a-button type="primary" style="margin-left:20px" @click="getScript">获取脚本</a-button> -->
-        <a-button type="primary" style="margin-left:20px" @click="lookFail">查看失败扇区</a-button>
-        <a-button type="primary" style="margin-left:20px" @click="lookFail('All')">查看全部</a-button>
+        <a-button type="primary" style="margin-left: 20px" @click="lookFail">查看失败扇区</a-button>
+        <a-button type="primary" style="margin-left: 20px" @click="lookFail('All')">查看全部</a-button>
       </p>
 
       <!-- <table-filter :settings="modalFilterSettings" @submit="modalFilterTableData" /> -->
@@ -102,7 +100,7 @@
       <div style="margin-top: 20px">
         <BaseTable
           :id="'Number'"
-          ref="table"
+          ref="modelTable"
           :columns="modalTableColumns"
           :data="modalTableData"
           class="page-base-table"
@@ -110,25 +108,19 @@
           :loading="loading1"
           :is-selectable="true"
           :if-hide-pagination="true"
-          :scroll="{type:1}"
+          :scroll="{ type: 1 }"
           @selectChange="onSelectChange"
           @tableChange="modalTableChange"
         >
-          <span slot="text" slot-scope="record" :class="record.record.IsCurrent===true?'red':''">{{ record.text }}</span>
+          <span slot="text" slot-scope="record" :class="record.record.IsCurrent === true ? 'red' : ''">{{ record.text }}</span>
         </BaseTable>
       </div>
     </a-modal>
 
     <a-modal v-model="lookVisible" :title="lookTitle" width="30%">
-      <LookInfo
-        :setting="lookSetting"
-        :data="machineDetails"
-      />
+      <LookInfo :setting="lookSetting" :data="machineDetails" />
       <div slot="footer">
-        <a-button
-          type="primary"
-          @click="confirm"
-        >确定</a-button>
+        <a-button type="primary" @click="confirm">确定</a-button>
       </div>
     </a-modal>
     <!-- 表格 结束 -->
@@ -148,7 +140,25 @@
   </page-header-wrapper>
 </template>
 <script>
-import { wdpostDeadlines, workerList, sectorsState, sectorsCount, taskCosts, workerPower, workerSectors, machineIp, setHardwareIssue, hardwareIssueType, sectorsCommands, minerSectors, minerSectorsTypes } from '@/api/login'
+import {
+  wdpostDeadlines,
+  workerList,
+  sectorsState,
+  sectorsCount,
+  taskCosts,
+  workerPower,
+  workerSectors,
+  machineIp,
+  setHardwareIssue,
+  hardwareIssueType,
+  sectorsCommands,
+  minerSectors,
+  minerSectorsTypes,
+  migrateOverview,
+  workerPowerTypes,
+  migrateTasks,
+  storeMachines
+} from '@/api/login'
 import Chart from '@/components/common/chart.vue'
 import BaseTable from '@/components/common/baseTable.vue'
 import LookInfo from '@/components/common/lookInfo.vue'
@@ -164,7 +174,10 @@ export default {
   },
   data() {
     return {
+      MigrationCount: '',
+      StoreMachineCount: '',
       minerSectorsList: [],
+      workerPowerList: [],
       modalTableColumns: [],
       lookVisible: false,
       lookTitle: 'IP详情',
@@ -257,13 +270,13 @@ export default {
         }
       ],
       popupFormValue: {
-        'ID': '',
-        'Cluster': '',
-        'MinerID': '',
-        'Type': '',
-        'IP': '',
-        'Company': '',
-        'Username': ''
+        ID: '',
+        Cluster: '',
+        MinerID: '',
+        Type: '',
+        IP: '',
+        Company: '',
+        Username: ''
       }
     }
   },
@@ -273,6 +286,7 @@ export default {
       this.$router.push('/minerList')
       return false
     }
+    this.workerPowerTypes()
     this.minerSectorsTypes()
     this.initTable()
     this.listChange()
@@ -281,6 +295,7 @@ export default {
     this.taskCosts()
     this.workerPower()
     this.hardwareIssueType()
+    this.migrateOverview()
   },
   methods: {
     isSelectable() {
@@ -288,7 +303,7 @@ export default {
     },
     // 表格配置
     initTable() {
-      this.sectorsList = []
+      // this.sectorsList = []
       this.visibleFilter = true
       this.formPopupSetting = [
         {
@@ -346,7 +361,6 @@ export default {
           key: 'MinerID',
           align: 'center',
           sorter: true
-
         },
         {
           title: '状态',
@@ -371,7 +385,6 @@ export default {
           sorter: true,
           scopedSlots: { customRender: 'CreatedAt' }
         }
-
       ]
       this.filterSettings = [
         {
@@ -379,7 +392,7 @@ export default {
           key: 'IP',
           type: 'input',
           placeholder: 'IP',
-          style: 'width:200px'
+          style: 'width:100px'
         },
         {
           label: '是否密封',
@@ -416,15 +429,15 @@ export default {
           },
           {
             title: 'P1Failed',
-            dataIndex: 'PreCommit1Failed',
-            key: 'PreCommit1Failed',
+            dataIndex: 'SealPreCommit1Failed',
+            key: 'SealPreCommit1Failed',
             align: 'center',
             sorter: true
           },
           {
             title: 'P2Failed',
-            dataIndex: 'PreCommit2Failed',
-            key: 'PreCommit2Failed',
+            dataIndex: 'SealPreCommit2Failed',
+            key: 'SealPreCommit2Failed',
             align: 'center',
             sorter: true
           },
@@ -538,7 +551,6 @@ export default {
                 emitName: 'operateDetial',
                 type: 'primary'
               }
-
             ]
           }
         ]
@@ -552,7 +564,6 @@ export default {
             align: 'center',
             scopedSlots: { customRender: 'MinerID' },
             slotName: 'text'
-
           },
           {
             title: 'Deadline',
@@ -644,6 +655,43 @@ export default {
           }
         ]
       } else if (this.mode === '0') {
+        this.filterSettings = [
+          {
+            label: 'IP',
+            key: 'IP',
+            type: 'input',
+            placeholder: 'IP',
+            style: 'width:100px'
+          },
+
+          {
+            label: '算力类型',
+            key: 'sealing',
+            type: 'select',
+            placeholder: '请选择',
+            options: this.workerPowerList
+          },
+          {
+            label: '是否密封',
+            key: 'status',
+            type: 'select',
+            placeholder: '请选择',
+            options: [
+              {
+                label: '全部',
+                value: ''
+              },
+              {
+                label: '否',
+                value: 0
+              },
+              {
+                label: '是',
+                value: 1
+              }
+            ]
+          }
+        ]
         this.tableColumns = [
           {
             title: 'IP',
@@ -708,6 +756,12 @@ export default {
             align: 'center'
           },
           {
+            title: '未迁移数',
+            dataIndex: 'UnmigratedCount',
+            key: 'UnmigratedCount',
+            align: 'center'
+          },
+          {
             title: '是否密封',
             dataIndex: 'Status',
             key: 'Status',
@@ -756,72 +810,420 @@ export default {
             key: 'IP',
             type: 'input',
             placeholder: 'IP',
-            style: 'width:200px'
+            style: 'width:100px'
+          },
+          {
+            label: '扇区号',
+            key: 'number',
+            type: 'input',
+            placeholder: '扇区号',
+            style: 'width:100px'
           },
           {
             label: '状态',
-            key: 'sealing',
+            key: 'type',
             type: 'select',
             placeholder: '请选择',
+            style: 'width:220px',
             options: this.minerSectorsList
           }
         ]
-        this.tableColumns = [{
-          title: 'IP',
-          dataIndex: 'IP',
-          key: 'MinerID',
-          align: 'center',
-          sorter: true
+        this.tableColumns = [
+          {
+            title: 'IP',
+            dataIndex: 'IP',
+            key: 'MinerID',
+            align: 'center',
+            sorter: true
+          },
+          {
+            title: '状态',
+            dataIndex: 'Status',
+            key: 'Status',
+            align: 'center',
+            sorter: true
+          },
+          {
+            title: '扇区号',
+            dataIndex: 'Number',
+            key: 'Number',
+            align: 'center',
+            sorter: true
+          },
+          {
+            title: '创建时间',
+            dataIndex: 'CreatedAt',
+            key: 'CreatedAt',
+            align: 'center',
+            type: 'formatTime',
+            sorter: true,
+            scopedSlots: { customRender: 'CreatedAt' }
+          }
+          // {
+          //   title: '操作',
+          //   dataIndex: 'operate',
+          //   align: 'center',
+          //   key: 'operate',
+          //   width: '10%',
+          //   scopedSlots: { customRender: 'operate' },
+          //   buttons: [
+          //     {
+          //       label: '重试',
+          //       emitName: 'restart',
+          //       type: 'primary'
+          //     },
+          //     {
+          //       label: '删除',
+          //       emitName: 'remove',
+          //       type: 'primary'
+          //     }
+          //   ]
+          // }
+        ]
+      } else if (this.mode === '4') {
+        this.filterSettings = [
+          {
+            label: '扇区号',
+            key: 'number',
+            type: 'input',
+            placeholder: '扇区号',
+            style: 'width:100px'
+          },
+          {
+            label: '扇区号',
+            key: 'FromIp',
+            type: 'input',
+            placeholder: 'FromIp',
+            style: 'width:100px'
+          },
+          {
+            label: '状态',
+            key: 'status',
+            type: 'select',
 
-        },
-        {
-          title: '状态',
-          dataIndex: 'Status',
-          key: 'Status',
-          align: 'center',
-          sorter: true
-        },
-        {
-          title: '扇区号',
-          dataIndex: 'Number',
-          key: 'Number',
-          align: 'center',
-          sorter: true
-        },
-        {
-          title: '创建时间',
-          dataIndex: 'CreatedAt',
-          key: 'CreatedAt',
-          align: 'center',
-          type: 'formatTime',
-          sorter: true,
-          scopedSlots: { customRender: 'CreatedAt' }
-        },
-        {
-          title: '操作',
-          dataIndex: 'operate',
-          align: 'center',
-          key: 'operate',
-          width: '10%',
-          scopedSlots: { customRender: 'operate' },
-          buttons: [
-            {
-              label: '重试',
-              emitName: 'restart',
-              type: 'primary'
-            },
-            {
-              label: '删除',
-              emitName: 'remove',
-              type: 'primary'
-            }
-          ]
-        }
+            placeholder: '状态',
+            style: 'width:100px',
+            options: [
+              {
+                label: '全部',
+                value: ''
+              },
+              {
+                label: '未迁移',
+                value: 'Wait'
+              },
+              {
+                label: '迁移中',
+                value: 'Migrating'
+              },
+              {
+                label: '已迁移',
+                value: 'Migrated'
+              }
+            ]
+          },
+          {
+            label: '更新时间',
+            key: 'time',
+            style: 'width:200px',
+            type: 'daterange'
+          }
+        ]
+        this.tableColumns = [
+          {
+            title: '扇区号',
+            dataIndex: 'Number',
+            key: 'Number',
+            align: 'center'
+          },
+          {
+            title: 'FromIP',
+            dataIndex: 'FromIP',
+            key: 'FromIP',
+            align: 'center',
+            sorter: true
+          },
+          {
+            title: 'FromPath',
+            dataIndex: 'FromPath',
+            key: 'FromPath',
+            align: 'center'
+          },
+
+          {
+            title: 'StoreIP',
+            dataIndex: 'StoreIP',
+            key: 'StoreIP',
+            align: 'center',
+            sorter: true
+          },
+          {
+            title: 'StorePath',
+            dataIndex: 'StorePath',
+            key: 'StorePath',
+            align: 'center'
+          },
+          {
+            title: '状态',
+            dataIndex: 'Status',
+            key: 'Status',
+            align: 'center',
+            scopedSlots: { customRender: 'Status' },
+            colorMarks: [
+              {
+                label: '未迁移',
+                value: 'Wait',
+                color: '#f5222d'
+              },
+              {
+                label: '迁移中',
+                value: 'Migrating',
+                color: ''
+              },
+              {
+                label: '已迁移',
+                value: 'Migrated',
+                color: '#04d919'
+              }
+            ]
+          },
+          {
+            title: 'FtpStatus',
+            dataIndex: 'FtpStatus',
+            key: 'FtpStatus',
+            align: 'center'
+          },
+          {
+            title: '失败',
+            dataIndex: 'FailureCount',
+            key: 'FailureCount',
+            align: 'center'
+          },
+          {
+            title: '总耗时',
+            dataIndex: 'ElapsedTime',
+            key: 'ElapsedTime',
+            align: 'center'
+          },
+          {
+            title: '创建时间',
+            dataIndex: 'CreatedAt',
+            key: 'CreatedAt',
+            align: 'center',
+            type: 'formatTime',
+            scopedSlots: { customRender: 'CreatedAt' },
+            sorter: true
+          },
+
+          {
+            title: '更新时间',
+            dataIndex: 'UpdatedAt',
+            key: 'UpdatedAt',
+            align: 'center',
+            type: 'formatTime',
+            scopedSlots: { customRender: 'UpdatedAt' },
+            sorter: true
+          }
+        ]
+      } else if (this.mode === '5') {
+        this.filterSettings = [
+          {
+            label: '存储IP',
+            key: 'storeip',
+            type: 'input',
+            sorter: true,
+            placeholder: '存储IP',
+            style: 'width:100px'
+          },
+
+          {
+            label: '状态',
+            key: 'status',
+            type: 'select',
+            placeholder: '请选择',
+            options: [
+              {
+                label: '全部',
+                value: ''
+              },
+              {
+                label: '禁用',
+                value: 0
+              },
+              {
+                label: '启用',
+                value: 1
+              }
+            ]
+          },
+          {
+            label: '更新时间',
+            key: 'time',
+            style: 'width:200px',
+            type: 'daterange'
+          }
+        ]
+        this.tableColumns = [
+          {
+            title: '矿工号',
+            dataIndex: 'MinerID',
+            key: 'MinerID',
+            align: 'center'
+          },
+
+          {
+            title: 'StoreIP',
+            dataIndex: 'StoreIP',
+            key: 'StoreIP',
+            align: 'center'
+          },
+          {
+            title: 'StorePath',
+            dataIndex: 'StorePath',
+            key: 'StorePath',
+            align: 'center'
+          },
+          {
+            title: 'GroupID',
+            dataIndex: 'GroupID',
+            key: 'GroupID',
+            align: 'center'
+          },
+          {
+            title: '当前并发',
+            dataIndex: 'ParallelMigrateSectors',
+            key: 'ParallelMigrateSectors',
+            align: 'center'
+          },
+          {
+            title: '最大并发',
+            dataIndex: 'MaxParallelMigrateSectors',
+            key: 'MaxParallelMigrateSectors',
+            align: 'center'
+          },
+          {
+            title: '完成迁移',
+            dataIndex: 'StoredSectors',
+            key: 'StoredSectors',
+            align: 'center'
+          },
+          {
+            title: '最大可迁移',
+            dataIndex: 'MaxStoreSectors',
+            key: 'MaxStoreSectors',
+            align: 'center'
+          },
+          {
+            title: '状态',
+            dataIndex: 'Status',
+            key: 'Status',
+            align: 'center',
+            scopedSlots: { customRender: 'Status' },
+            colorMarks: [
+              {
+                label: '禁用',
+                value: 0,
+                color: '#f5222d'
+              },
+              {
+                label: '启用',
+                value: 1,
+                color: '#04d919'
+              }
+            ]
+          },
+
+          {
+            title: '创建时间',
+            dataIndex: 'CreatedAt',
+            key: 'CreatedAt',
+            align: 'center',
+            type: 'formatTime',
+            scopedSlots: { customRender: 'CreatedAt' },
+            sorter: true
+          },
+
+          {
+            title: '更新时间',
+            dataIndex: 'UpdatedAt',
+            key: 'UpdatedAt',
+            align: 'center',
+            type: 'formatTime',
+            scopedSlots: { customRender: 'UpdatedAt' },
+            sorter: true
+          },
+          {
+            title: '迁移最大耗时(min)',
+            dataIndex: 'MigrateCostMax',
+            key: 'MigrateCostMax',
+            align: 'center',
+            scopedSlots: { customRender: 'MigrateCostMax' },
+            slotName: 'toFixed'
+          },
+          {
+            title: '迁移最小耗时(min)',
+            dataIndex: 'MigrateCostMin',
+            key: 'MigrateCostMin',
+            align: 'center',
+            scopedSlots: { customRender: 'MigrateCostMin' },
+            slotName: 'toFixed'
+          },
+          {
+            title: '迁移平均耗时(min)',
+            dataIndex: 'MigrateCostAvg',
+            key: 'MigrateCostAvg',
+            align: 'center',
+            scopedSlots: { customRender: 'MigrateCostAvg' },
+            slotName: 'toFixed'
+          },
+          {
+            title: '已迁移数量',
+            dataIndex: 'MigratedCount',
+            key: 'MigratedCount',
+            align: 'center'
+          },
+          {
+            title: '迁移中数量',
+            dataIndex: 'MigratingCount',
+            key: 'MigratingCount',
+            align: 'center'
+          }
         ]
       }
     },
+
+    // 算力列表类型
+    workerPowerTypes() {
+      this.workerPowerList = []
+      workerPowerTypes().then((res) => {
+        const result = res.data
+        if (result.code === 200) {
+          // let list = []
+          const data = result.data.type
+          for (let i = 0; i < data.length; i++) {
+            const item = data[i]
+            this.workerPowerList.push({ label: item.Name, value: item.Type })
+          }
+          console.log(this.workerPowerList, '111111111111111111111')
+          // this.clustersDefault = this.clustersList[0].label
+        }
+      })
+    },
+    // 迁移统计概览
+    migrateOverview() {
+      migrateOverview({ minerid: this.minerid }).then((res) => {
+        console.log(res, '65565656')
+        const result = res.data
+        if (result.code === 200) {
+          this.MigrationCount = result.data.MigrationCount
+          this.StoreMachineCount = result.data.StoreMachineCount
+        }
+      })
+    },
+    // 获取扇区列表类型
     minerSectorsTypes() {
-      minerSectorsTypes().then(res => {
+      this.minerSectorsList = []
+      minerSectorsTypes().then((res) => {
         const result = res.data
         if (result.code === 200) {
           // let list = []
@@ -836,7 +1238,6 @@ export default {
     },
     modalFilterTableData(e) {
       this.modalFilter = { ...e }
-      console.log(e, '12122')
 
       // this.
       // if (this.mode === '0') {
@@ -845,21 +1246,20 @@ export default {
       //   this.workerList()
       // }
     },
+    // 表格选择
     sectionSelectChange(selectedRowKeys, selectedRows) {
-      console.log(selectedRows, '999999999999999')
       this.sectorsList = selectedRows
       // this.changList = selectedRowKeys
       // this.popupFormValue.BoxIdList = selectedRowKeys
     },
     onSelectChange(selectedRowKeys, selectedRows) {
-      console.log(selectedRows, '999999999999999')
       this.sectorsList = selectedRows
       // this.changList = selectedRowKeys
       // this.popupFormValue.BoxIdList = selectedRowKeys
     },
     // 类型列表
     hardwareIssueType() {
-      hardwareIssueType().then(res => {
+      hardwareIssueType().then((res) => {
         const result = res.data
         if (result.code === 200) {
           // let list = []
@@ -877,7 +1277,8 @@ export default {
     },
     // 查看失败的扇区
     lookFail(type) {
-      console.log(type, '121212')
+      this.sectorsList = []
+      this.$refs.modelTable.selectedRowKeys = []
       if (type === 'All') {
         this.failed = ''
       } else {
@@ -886,7 +1287,6 @@ export default {
       this.getModalTableData()
     },
     signError(e) {
-      console.log(e, '1212121')
       this.visibleSet = true
       this.popupFormValue = e
     },
@@ -898,13 +1298,12 @@ export default {
       // from.BoxIdList = this.popupFormValue.BoxIdList
       // const params = { ...this.popupFormValue }
       // params.ip = this.popupFormValue.ip.split(',')
-      console.log(from, '1212221')
       if (!Array.isArray(from.IP)) {
         from.IP = from.IP.split(',')
       }
       from.Cluster = from.Company
       const url = '/v1/hardware_issue'
-      setHardwareIssue(from, url).then(res => {
+      setHardwareIssue(from, url).then((res) => {
         const result = res.data
         if (result.code === 200) {
           this.$message.success('修改成功')
@@ -922,26 +1321,27 @@ export default {
     // 获取脚本
     getScript(type) {
       // sectorsList
-      sectorsCommands({ Sectors: this.sectorsList }).then(res => {
-        console.log(res)
+      sectorsCommands({ Sectors: this.sectorsList }).then((res) => {
         const result = res.data
         if (result.code === 200) {
           this.retryCmd = result.data.retry_cmd
           this.removeCmd = result.data.remove_cmd
-          if (type === 'restart' && this.retryCmd || type === 'remove' && this.removeCmd) {
+          if ((type === 'restart' && this.retryCmd) || (type === 'remove' && this.removeCmd)) {
             this.$success({
               title: '脚本内容',
               width: '30%',
               content: () => {
-                return <div style={{ fontSize: '14px' }}>
-                  {
-                    type === 'restart' ? this.retryCmd.map(item => {
-                      return <div>{item}</div>
-                    }) : this.removeCmd.map(item => {
-                      return <div>{item}</div>
-                    })
-                  }
-                </div>
+                return (
+                  <div style={{ fontSize: '14px' }}>
+                    {type === 'restart'
+                      ? this.retryCmd.map((item) => {
+                        return <div>{item}</div>
+                      })
+                      : this.removeCmd.map((item) => {
+                        return <div>{item}</div>
+                      })}
+                  </div>
+                )
               }
             })
           } else {
@@ -959,14 +1359,11 @@ export default {
     },
     // 显示ip详情
     showIp(value) {
-      console.log(value, '5656656')
       const params = {
         ip: value.record.IP,
         minerid: this.minerid
-
       }
-      machineIp(params).then(res => {
-        console.log(res, '565656')
+      machineIp(params).then((res) => {
         const result = res.data
         if (result.code === 200) {
           this.machineDetails = result.data.machine
@@ -982,6 +1379,14 @@ export default {
         this.workerPower()
       } else if (this.mode === '1') {
         this.workerList()
+      } else if (this.mode === '3') {
+        this.sectorsList = []
+        this.$refs.tableMain.selectedRowKeys = []
+        this.minerSectors()
+      } else if (this.mode === '4') {
+        this.migrateTasks()
+      } else if (this.mode === '5') {
+        this.storeMachines()
       }
     },
     // 排序
@@ -1013,7 +1418,6 @@ export default {
       workerSectors(params).then((res) => {
         this.loading1 = false
         const result = res.data
-        console.log(result, '56656565656')
         if (result.code === 200) {
           this.modalTableData = result.data.sectors
           this.removeCmd = result.data.remove_cmd
@@ -1038,30 +1442,47 @@ export default {
         this.workerPower()
       } else if (this.mode === '1') {
         this.workerList()
+      } else if (this.mode === '3') {
+        this.minerSectors()
+      } else if (this.mode === '4') {
+        this.migrateTasks()
+      } else if (this.mode === '5') {
+        this.storeMachines()
       }
     },
     // 查看详情workerSectors
     operateDetial(value) {
-      console.log(value, '2323')
       this.visible = true
       this.getModalTableData(value.IP)
       // this.$router.push(`/workerSectors?IP=${value.IP}&minerid=${this.minerid}`)
     },
-    // 节点详情搜索
+    // 任务数量搜索
     sectorsCountCheckout(e) {
       const fromatStr = 'YYYY-MM-DD HH:mm:ss'
+      const startTime = this.moment(e[0]).format(fromatStr)
+      const endTime = this.moment(e[1]).format(fromatStr)
+      if (new Date(endTime).getMonth() - new Date(startTime).getMonth() > 2) {
+        this.$message.error('筛选月份间隔不得超过两个月')
+        return false
+      }
       this.sectorsCountSearch = {
-        start_time: this.moment(e[0]).format(fromatStr),
-        end_time: this.moment(e[1]).format(fromatStr)
+        start_time: startTime,
+        end_time: endTime
       }
       this.sectorsCount()
     },
     // 任务时长搜索
     taskCostscheckout(e) {
       const fromatStr = 'YYYY-MM-DD HH:mm:ss'
+      const startTime = this.moment(e[0]).format(fromatStr)
+      const endTime = this.moment(e[1]).format(fromatStr)
+      if (new Date(endTime).getMonth() - new Date(startTime).getMonth() > 2) {
+        this.$message.error('筛选月份间隔不得超过两个月')
+        return false
+      }
       this.taskCostsSearch = {
-        start_time: this.moment(e[0]).format(fromatStr),
-        end_time: this.moment(e[1]).format(fromatStr)
+        start_time: startTime,
+        end_time: endTime
       }
       this.taskCosts()
     },
@@ -1072,7 +1493,7 @@ export default {
         minerid: this.minerid,
         ...this.sectorsCountSearch
       }
-      sectorsCount(params).then(res => {
+      sectorsCount(params).then((res) => {
         const result = res.data
         if (result.code === 200) {
           this.sectorsCountList = result.data.sectors_count
@@ -1093,7 +1514,7 @@ export default {
         minerid: this.minerid,
         ...this.taskCostsSearch
       }
-      taskCosts(params).then(res => {
+      taskCosts(params).then((res) => {
         const result = res.data
         if (result.code === 200) {
           this.taskCostsList = result.data.task_costs
@@ -1108,7 +1529,7 @@ export default {
     },
     // 节点详情
     sectorsState() {
-      sectorsState({ minerid: this.minerid }).then(res => {
+      sectorsState({ minerid: this.minerid }).then((res) => {
         const result = res.data
         if (result.code === 200) {
           this.machineCount = result.data.machine_count
@@ -1120,7 +1541,10 @@ export default {
       })
     },
     // tab切换
-    listChange() {
+    listChange(e) {
+      // console.log(e.target, '511515')
+      if (this.loading === true) return
+      // this.initTable()
       if (this.mode === '1') {
         this.workerList()
       } else if (this.mode === '2') {
@@ -1129,6 +1553,10 @@ export default {
         this.workerPower()
       } else if (this.mode === '3') {
         this.minerSectors()
+      } else if (this.mode === '4') {
+        this.migrateTasks()
+      } else if (this.mode === '5') {
+        this.storeMachines()
       }
     },
     // 处理表格翻页
@@ -1137,15 +1565,69 @@ export default {
       this.page.size = pagination.pageSize
       if (this.mode === '0') {
         this.workerPower()
-      } else {
+      } else if (this.mode === '1') {
         this.workerList()
+      } else if (this.mode === '3') {
+        this.minerSectors()
+      } else if (this.mode === '4') {
+        this.migrateTasks()
+      } else if (this.mode === '5') {
+        this.storeMachines()
       }
+    },
+    // 存储机列表
+    storeMachines() {
+      if (this.loading === true) return
+      this.initTable()
+      this.loading = true
+      let params = {}
+      params = {
+        ...this.generateParams(),
+        ...this.filter,
+        minerid: this.minerid
+      }
+      params.sort_field = this.sort.sort_field
+      params.sort_order = this.sort.sort_order
+      storeMachines(params).then((res) => {
+        this.loading = false
+        const result = res.data
+        if (result.code === 200) {
+          this.tableData = result.data.machines
+          this.page.total = result.data.total
+        } else {
+          this.$message.error(result.msg)
+        }
+      })
+    },
+    // 迁移任务列表
+    migrateTasks() {
+      if (this.loading === true) return
+      this.initTable()
+      this.loading = true
+      let params = {}
+      params = {
+        ...this.generateParams(),
+        ...this.filter,
+        minerid: this.minerid
+      }
+      params.sort_field = this.sort.sort_field
+      params.sort_order = this.sort.sort_order
+      migrateTasks(params).then((res) => {
+        this.loading = false
+        const result = res.data
+        if (result.code === 200) {
+          this.tableData = result.data.tasks
+          this.page.total = result.data.total
+        } else {
+          this.$message.error(result.msg)
+        }
+      })
     },
     // 扇区列表
     minerSectors() {
-      this.initTable()
       // console.log()
       if (this.loading === true) return
+      this.initTable()
       this.loading = true
       let params = {}
       params = {
@@ -1153,7 +1635,9 @@ export default {
         ...this.filter
       }
       this.pagination = false
-      minerSectors(params).then(res => {
+      params.sort_field = this.sort.sort_field
+      params.sort_order = this.sort.sort_order
+      minerSectors(params).then((res) => {
         this.loading = false
         const result = res.data
         if (result.code === 200) {
@@ -1164,9 +1648,10 @@ export default {
         }
       })
     },
+    // 机器算例列表
     workerPower() {
-      this.initTable()
       if (this.loading === true) return
+      this.initTable()
       this.loading = true
       let params = {}
       params = {
@@ -1176,7 +1661,7 @@ export default {
       params.sort_field = this.sort.sort_field
       params.sort_order = this.sort.sort_order
       this.pagination = false
-      workerPower(params).then(res => {
+      workerPower(params).then((res) => {
         this.loading = false
         const result = res.data
         if (result.code === 200) {
@@ -1189,8 +1674,8 @@ export default {
     },
     // 机器列表
     workerList() {
-      this.initTable()
       if (this.loading === true) return
+      this.initTable()
       this.loading = true
       let params = {}
       params = {
@@ -1200,7 +1685,7 @@ export default {
       params.sort_field = this.sort.sort_field
       params.sort_order = this.sort.sort_order
       this.pagination = false
-      workerList(params).then(res => {
+      workerList(params).then((res) => {
         this.loading = false
         const result = res.data
         if (result.code === 200) {
@@ -1213,8 +1698,8 @@ export default {
     },
     // 获取deadline表格数据
     deadline() {
-      this.initTable()
       if (this.loading === true) return
+      this.initTable()
       this.loading = true
       const params = this.generateParams()
       delete params.page
@@ -1241,27 +1726,26 @@ export default {
       // Object.assign(params)
       return params
     }
-
   }
 }
 </script>
 <style lang="less">
-.card-list{
-  background-color: #fff;
-  display: flex;
-  justify-content: space-between;
-  padding-bottom:20px;
-  flex-wrap: wrap;
-  .node-detail{
- display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  ::after{
-    display: none;
-  }
-    .detail-item{
-      min-width: 48%;
+  .card-list {
+    background-color: #fff;
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 20px;
+    flex-wrap: wrap;
+    .node-detail {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      ::after {
+        display: none;
+      }
+      .detail-item {
+        min-width: 48%;
+      }
     }
   }
-}
 </style>

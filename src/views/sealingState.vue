@@ -18,6 +18,7 @@
           @lookDetails="lookDetails"
           @tableChange="tableChange"
           @pageChange="handleTableChange"
+          @SetSealing="SetSealing"
         >
           <span slot="text" slot-scope="record" :class="record.record.IsCurrent===true?'red':''">{{ record.text }}</span>
         </BaseTable>
@@ -27,7 +28,7 @@
   </page-header-wrapper>
 </template>
 <script>
-import { sealingState } from '@/api/login'
+import { sealingState, setSealingState } from '@/api/login'
 import BaseTable from '@/components/common/baseTable.vue'
 export default {
   components: {
@@ -57,7 +58,7 @@ export default {
     //   this.$router.push('/minerList')
     //   return false
     // }
-    console.log(this.$route.query, '6556')
+    // console.log(this.$route.query, '6556')
     this.initTable()
     this.getTableData()
   },
@@ -131,16 +132,16 @@ export default {
 
         {
           title: 'P1Failed',
-          dataIndex: 'PreCommit1Failed',
-          key: 'PreCommit1Failed',
+          dataIndex: 'SealPreCommit1Failed',
+          key: 'SealPreCommit1Failed',
           align: 'center',
           width: '90px',
           sorter: true
         },
         {
           title: 'P2Failed',
-          dataIndex: 'PreCommit2Failed',
-          key: 'PreCommit2Failed',
+          dataIndex: 'SealPreCommit2Failed',
+          key: 'SealPreCommit2Failed',
           align: 'center',
           width: '90px',
           sorter: true
@@ -231,15 +232,16 @@ export default {
           key: 'Sealing',
           align: 'center',
           scopedSlots: { customRender: 'Sealing' },
-          colorMarks: [
+          emitName: 'SetSealing',
+          clickableTags: [
             {
               label: '否',
-              value: false,
+              value: 0,
               color: '#f5222d'
             },
             {
               label: '是',
-              value: true,
+              value: 1,
               color: '#04d919'
             }
           ]
@@ -264,6 +266,40 @@ export default {
 
       ]
     },
+    // 设置密封状态
+    SetSealing(e) {
+      console.log(e, '1211212')
+      const sealing = e.Sealing === 0 ? 1 : 0
+      let text = ''
+      if (sealing) {
+        text = '是'
+      } else {
+        text = '否'
+      }
+      const params = {
+        MinerID: e.MinerID,
+        Sealing: sealing
+      }
+      const what = this
+      this.$confirm({
+        title: '是否更改密封状态?',
+        content: h => <div style='color:#f5222d'>是否将密封状态更新为{text}</div>,
+        onOk() {
+          setSealingState(params).then(res => {
+            const result = res.data
+            if (result.code === 200) {
+              what.$message.success('更改成功')
+            } else {
+              what.$message.error(result.msg || '更新失败')
+            }
+          })
+        },
+        onCancel() {
+          what.$message.error('取消')
+        },
+        class: 'test'
+      })
+    },
     filterTableData(e) {
       this.filter = { ...e }
       this.getTableData()
@@ -272,7 +308,7 @@ export default {
     // 排序
     tableChange(sorter) {
       this.page = 1
-      console.log(sorter, '1221')
+      // console.log(sorter, '1221')
       if (sorter.order === 'descend') {
         this.sort.sort_order = 'Desc'
       } else if (sorter.order === 'ascend') {
@@ -285,12 +321,12 @@ export default {
       this.getTableData()
     },
     lookDetails(e) {
-      console.log(e, '45445545454545')
+      // console.log(e, '45445545454545')
       this.$router.push('/machine?minerid=' + e.MinerID)
     },
     // 处理表格翻页
     handleTableChange(pagination) {
-      console.log('59595599')
+      // console.log('59595599')
       // this.selectedRowKeys = []
       // this.popupFormValue.BoxIdList = []
       // this.$set(this.popupFormValue, 'BoxIdList', [])
@@ -300,7 +336,7 @@ export default {
     },
     // 获取表格数据
     getTableData() {
-      console.log(this.loading, '1212122')
+      // console.log(this.loading, '1212122')
       if (this.loading === true) return
       this.loading = true
       // const params = this.generateParams()
@@ -326,4 +362,5 @@ export default {
 
   }
 }
+
 </script>

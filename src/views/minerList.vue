@@ -1,6 +1,6 @@
 <template>
   <page-header-wrapper>
-    <div style="padding:20px;background-color:white;margin-bottom:20px">
+    <!-- <div style="padding:20px;background-color:white;margin-bottom:20px">
       集群名称:
       <a-select
         v-model="clustersDefault"
@@ -11,7 +11,7 @@
           {{ item.label }}
         </a-select-option>
       </a-select>
-    </div>
+    </div> -->
     <!-- 表格数据过滤器 -->
     <a-card size="small" :bordered="false">
       <table-filter :settings="filterSettings" @submit="filterTableData" />
@@ -29,8 +29,8 @@
           @lookcourse="lookcourse"
           @tableChange="tableChange"
         >
-
-          <a-popover v-if="record.listText" slot="LuckyValue" slot-scope="record" placement="bottom">
+          <!-- <span slot="LuckyValue" slot-scope="record">{{ record.text }} 45455</span> -->
+          <!-- <a-popover v-if="record.listText" slot="LuckyValue" slot-scope="record" placement="bottom">
             <template slot="content">
               <BaseTable
                 ref="table"
@@ -44,16 +44,35 @@
             </template>
             <a-button>{{ record.text }}</a-button>
           </a-popover>
-          <span v-else>{{ record.text }} </span>
+          <span v-else>{{ record.text }} </span> -->
           <span slot="FaultCount" slot-scope="record" :class="record.text!==0?'red text':'green'" @click="lookError(record)">{{ record.text }}</span>
           <span slot="Miner" slot-scope="record" class="text" @click="lookDeadline(record)">{{ record.text }}</span>
           <div slot="OrphanBlockCnt" slot-scope="record" style="min-width:90px">
-            <a-tag color="cyan">
-              {{ record.text['24h'] }}
-            </a-tag>
-            <a-tag color="blue">
-              {{ record.text['7d'] }}
-            </a-tag>
+            <div v-for="(item,key,index) in record.text" :key="index" style="display:inline-block;">
+              <a-popover v-if="record.record[key]" slot="LuckyValue" placement="bottom">
+                <template slot="content">
+                  <BaseTable
+                    ref="table"
+                    :columns="ableColumnsPopover"
+                    :data="record.record[key]"
+                    class="page-base-table"
+                    :fixed-width="true"
+                    :loading="loading"
+                    :if-hide-pagination="true"
+                  />
+                </template>
+                <a-tag :color="index===0?'cyan':'blue'" style="cursor: pointer;">
+                  {{ item }}
+                </a-tag>
+              </a-popover>
+              <!-- <span v-else>{{ record.text }} </span> -->
+              <a-tag v-else :color="index===0?'cyan':'blue'" style="cursor: pointer;">
+                {{ item }}
+              </a-tag>
+            </div>
+            <!-- <a-tag color="blue">
+              {{ record.text['OrphanBlock7d'] }}
+            </a-tag> -->
           </div>
         </BaseTable>
       </div>
@@ -89,7 +108,7 @@ export default {
   data() {
     return {
       filterSettings: [],
-      clustersDefault: '',
+      // clustersDefault: '',
       filter: {},
       ableColumnsPopover: [],
       visible: false,
@@ -206,8 +225,7 @@ export default {
     }
   },
   created() {
-    this.initTable()
-    // this.getTableData()
+    this.getTableData()
     this.clusters()
   },
   methods: {
@@ -215,18 +233,18 @@ export default {
       this.filterSettings = [
         {
           label: '矿工ID',
-          key: 'Miner',
+          key: 'minerid',
           type: 'input',
           placeholder: '请输入矿工ID',
           style: 'width:200px'
         },
-        // {
-        //   label: '集群名称',
-        //   key: 'cluster',
-        //   type: 'select',
-        //   placeholder: '请选择',
-        //   options: this.clustersList
-        // },
+        {
+          label: '集群名称',
+          key: 'cluster',
+          type: 'select',
+          placeholder: '请选择',
+          options: this.clustersList
+        },
         {
           label: '是否密封',
           key: 'sealing',
@@ -279,12 +297,14 @@ export default {
           title: '集群名称',
           dataIndex: 'Cluster',
           key: 'Cluster',
+          sorter: true,
           align: 'center'
         },
         {
           title: '公司名称',
           dataIndex: 'Company',
           key: 'Company',
+          sorter: true,
           align: 'center'
         },
 
@@ -293,20 +313,20 @@ export default {
           dataIndex: 'LuckyValue24hStr',
           key: 'LuckyValue24h',
           align: 'center',
-          sorter: true,
-          scopedSlots: { customRender: 'LuckyValue24hStr' },
-          slotName: 'LuckyValue',
-          listKey: 'OrphanBlock24h'
+          sorter: true
+          // scopedSlots: { customRender: 'LuckyValue24hStr' },
+          // slotName: 'LuckyValue',
+          // listKey: 'OrphanBlock24h'
         },
         {
           title: '幸运值（7d）',
           dataIndex: 'LuckyValue7dStr',
-          key: 'LuckyValue7d',
+          key: 'LuckyValue7dStr',
           align: 'center',
-          sorter: true,
-          scopedSlots: { customRender: 'LuckyValue7dStr' },
-          slotName: 'LuckyValue',
-          listKey: 'OrphanBlock7d'
+          sorter: true
+          // scopedSlots: { customRender: 'LuckyValue7dStr' },
+          // slotName: 'LuckyValue',
+          // listKey: 'LuckyValue7d'
         },
         {
           title: '幸运值（30d）',
@@ -319,10 +339,11 @@ export default {
 
         {
           title: '矿工号',
-          dataIndex: 'Miner',
-          key: 'Miner',
+          dataIndex: 'MinerID',
+          key: 'MinerID',
           align: 'center',
-          scopedSlots: { customRender: 'Miner' },
+          sorter: true,
+          scopedSlots: { customRender: 'MinerID' },
           slotName: 'Miner'
         },
         {
@@ -354,7 +375,8 @@ export default {
           key: 'OrphanBlockCnt',
           align: 'center',
           scopedSlots: { customRender: 'OrphanBlockCnt' },
-          slotName: 'OrphanBlockCnt'
+          slotName: 'OrphanBlockCnt',
+          listKey: 'LuckyValue'
         },
         {
           title: '错误证明',
@@ -422,11 +444,11 @@ export default {
 
       ]
     },
-    // 切换集群
-    handleChange(value) {
-      this.clustersDefault = value
-      this.getTableData()
-    },
+    // // 切换集群
+    // handleChange(value) {
+    //   this.clustersDefault = value
+    //   this.getTableData()
+    // },
     // 列表
     clusters() {
       clusters().then(res => {
@@ -436,15 +458,15 @@ export default {
           data.data.clusters.forEach(item => {
             this.clustersList.push({ label: item.Name, value: item.Name, ClientID: item.ClientID })
           })
+          this.initTable()
           // this.clustersList = data.data.clusters
-          this.clustersDefault = this.clustersList[0].label
-          this.getTableData()
+          // this.clustersDefault = this.clustersList[0].label
         }
       })
     },
     // 排序
     tableChange(sorter) {
-      console.log(sorter, '121211')
+      // console.log(sorter, '121211')
       if (sorter.order === 'descend') {
         this.sort.sort_order = 'Desc'
       } else if (sorter.order === 'ascend') {
@@ -514,7 +536,7 @@ export default {
       if (this.loading === true) return
       this.loading = true
       const params = this.generateParams()
-      params.cluster = this.clustersDefault
+      // params.cluster = this.clustersDefault
       params.sort_field = this.sort.sort_field
       params.sort_order = this.sort.sort_order
       minerList(params).then((res) => {

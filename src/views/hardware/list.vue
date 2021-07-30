@@ -394,43 +394,70 @@ export default {
           align: 'center'
         },
         {
-          title: 'AddPiece最大数量',
-          dataIndex: 'AddPieceMaxSize',
-          key: 'AddPieceMaxSize',
+          title: '矿工号',
+          dataIndex: 'MinerID',
+          key: 'MinerID',
           align: 'center'
         },
         {
-          title: 'AddPiece增加步长',
-          dataIndex: 'AddPieceIncreaseSize',
-          key: 'AddPieceIncreaseSize',
+          title: 'SubID',
+          dataIndex: 'SubMinerID',
+          key: 'SubMinerID',
           align: 'center'
         },
         {
-          title: 'AddPiece初始数量',
-          dataIndex: 'AddPieceInitialSize',
-          key: 'AddPieceInitialSize',
+          title: 'GroupID',
+          dataIndex: 'GroupID',
+          key: 'GroupID',
           align: 'center'
         },
         {
-          title: '最大扇区数量',
+          title: 'C2GroupID',
+          dataIndex: 'C2GroupID',
+          key: 'C2GroupID',
+          align: 'center'
+        },
+        {
+          title: '机器类型',
+          dataIndex: 'Type',
+          key: 'Type',
+          align: 'center'
+          // scopedSlots: { customRender: 'Type' },
+          // tags: this.options
+        },
+        {
+          title: '最大数量',
           dataIndex: 'SectorMaxSize',
           key: 'SectorMaxSize',
           align: 'center'
         },
         {
-          title: '存储机IP',
-          dataIndex: 'StoreIP',
-          key: 'StoreIP',
+          title: 'P1数量',
+          dataIndex: 'AddPieceMaxSize',
+          key: 'AddPieceMaxSize',
           align: 'center'
         },
         {
-          title: '存储机路径',
-          dataIndex: 'StorePath',
-          key: 'Storepach',
+          title: 'P2数量',
+          dataIndex: 'P2MaxSize',
+          key: 'P2MaxSize',
           align: 'center'
         },
         {
-          title: '是否做AddPiece',
+          title: 'C1数量',
+          dataIndex: 'C1MaxSize',
+          key: 'C1MaxSize',
+          align: 'center'
+        },
+        {
+          title: 'C2数量',
+          dataIndex: 'C2MaxSize',
+          key: 'C2MaxSize',
+          align: 'center'
+        },
+
+        {
+          title: '是否做P1',
           dataIndex: 'CanStore',
           key: 'CanStore',
           align: 'center',
@@ -447,14 +474,6 @@ export default {
               color: '#04d919'
             }
           ]
-        },
-        {
-          title: '机器类型',
-          dataIndex: 'Type',
-          key: 'Type',
-          align: 'center'
-          // scopedSlots: { customRender: 'Type' },
-          // tags: this.options
         },
         {
           title: '状态',
@@ -474,31 +493,6 @@ export default {
               color: '#04d919'
             }
           ]
-        },
-        // {
-        //   title: '故障类型',
-        //   dataIndex: 'FaultType',
-        //   key: 'FaultType',
-        //   align: 'center'
-        // },
-        // {
-        //   title: '磁盘总空间(GiB)',
-        //   dataIndex: 'DiskTotalSpace',
-        //   key: 'DiskTotalSpace',
-        //   align: 'center'
-        // },
-        // {
-        //   title: '剩余磁盘空间(GiB)',
-        //   dataIndex: 'DiskAvailSpace',
-        //   key: 'DiskAvailSpace',
-        //   align: 'center'
-        // },
-        {
-          title: '子MinerID',
-          dataIndex: 'SubMinerID',
-          key: 'SubMinerID',
-          align: 'center',
-          width: '20%'
         },
         {
           title: '操作',
@@ -631,6 +625,8 @@ export default {
     },
     // 表格-条件查询
     filterTableData(e) {
+      this.$refs.table.selectedRowKeys = []
+      this.popupFormValue.IP = []
       this.filter = { ...e }
       // 时间范围需要特殊处理
       delete this.filter.time

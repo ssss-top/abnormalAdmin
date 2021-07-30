@@ -598,6 +598,8 @@ export default {
     },
     // 表格-条件查询
     filterTableData(e) {
+      this.$refs.table.selectedRowKeys = []
+      this.changList = []
       this.filter = { ...e }
       // 时间范围需要特殊处理
       delete this.filter.time

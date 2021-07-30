@@ -53,7 +53,7 @@ export default {
     //   this.$router.push('/minerList')
     //   return false
     // }
-    console.log(this.$route.query, '6556')
+    // console.log(this.$route.query, '6556')
     this.initTable()
     this.getTableData()
     this.clusters()
@@ -183,7 +183,7 @@ export default {
     clusters() {
       clusters().then(res => {
         const data = res.data
-        console.log(data, '5656566')
+        // console.log(data, '5656566')
         if (data.code === 200) {
           const list = data.data.clusters
           list.forEach(item => {
@@ -232,11 +232,9 @@ export default {
     },
     // 表格-条件查询
     filterTableData(e) {
-      console.log(e, '9*9*9*9*99')
       this.filter = { ...e }
       // 时间范围需要特殊处理
       delete this.filter.time
-      console.log(this.moment(e.time[0]).format('YYYY-MM-DD HH:mm:ss'), this.moment(e.time[1]).format('YYYY-MM-DD HH:mm:ss'))
       if (e.time) {
         this.filter.start_at = this.moment(e.time[0]).format('YYYY-MM-DD HH:mm:ss')
         this.filter.end_at = this.moment(e.time[1]).format('YYYY-MM-DD HH:mm:ss')

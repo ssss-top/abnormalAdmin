@@ -40,9 +40,9 @@ export default {
 .user-info{
   margin:10px 0;
   display: flex;
-  label{
-    color:rgba(0,0,0,.3);
-  }
+  // label{
+  //   // color:rgba(0,0,0,.3);
+  // }
   span{
     flex: 1;
     text-align: right;

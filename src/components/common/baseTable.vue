@@ -41,6 +41,7 @@
               v-for="(tag,i) in getTags(col.clickableTags,text)"
               :key="i"
               :color="tag.color"
+              style="cursor: pointer;"
               @click="changeTag(col.emitName,record,text)"
             >{{ tag.label }}</a-tag>
           </span>

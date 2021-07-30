@@ -60,7 +60,7 @@ export default {
       this.$router.push('/minerList')
       return false
     }
-    console.log(this.$route.query, '6556')
+    // console.log(this.$route.query, '6556')
     this.initTable()
     this.getTableData()
   },

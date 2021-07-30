@@ -320,11 +320,38 @@ export function minerSectors(parameter) {
   })
 }
 
-// 获取扇区列表
+// 获取扇区列表类型
 export function minerSectorsTypes(parameter) {
   const urlStr = JsonToUrl(parameter)
   return request({
     url: `/v1/statistic/miner_sectors_types?${urlStr}`,
+    method: 'get'
+  })
+}
+
+// 获取脚本
+export function setSealingState(parameter) {
+  return request({
+    url: `/v1/statistic/set_sealing_state`,
+    method: 'post',
+    data: parameter
+  })
+}
+
+// 迁移统计概览
+export function migrateOverview(parameter) {
+  const urlStr = JsonToUrl(parameter)
+  return request({
+    url: `/v1/sector/migrate_overview?${urlStr}`,
+    method: 'get'
+  })
+}
+
+// 算力类型列表
+export function workerPowerTypes(parameter) {
+  const urlStr = JsonToUrl(parameter)
+  return request({
+    url: `/v1/sector/worker_power_types?${urlStr}`,
     method: 'get'
   })
 }

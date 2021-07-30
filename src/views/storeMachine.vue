@@ -1,5 +1,17 @@
 <template>
   <page-header-wrapper>
+    <div style="padding:20px;background-color:white;margin-bottom:20px">
+      集群名称:
+      <a-select
+        v-model="defaultClusters"
+        style="width: 120px"
+        @change="handleChange"
+      >
+        <a-select-option v-for="(item,index) in clustersList" :key="index" :value="item.value">
+          {{ item.label }}
+        </a-select-option>
+      </a-select>
+    </div>
     <!-- 表格数据过滤器 -->
     <a-card size="small" :bordered="false">
       <table-filter :settings="filterSettings" @submit="filterTableData" />
@@ -42,6 +54,7 @@ export default {
       filterSettings: [],
       tableColumns: [],
       tableData: [],
+      defaultClusters: '',
       loading: false,
       sort: {
         sort_field: '',
@@ -60,7 +73,7 @@ export default {
     //   this.$router.push('/minerList')
     //   return false
     // }
-    console.log(this.$route.query, '6556')
+    // console.log(this.$route.query, '6556')
     this.initTable()
   },
   methods: {
@@ -74,13 +87,13 @@ export default {
           placeholder: '矿工号',
           style: 'width:200px'
         },
-        {
-          label: '集群名称',
-          key: 'cluster',
-          type: 'select',
-          placeholder: '请选择',
-          options: this.clustersList
-        },
+        // {
+        //   label: '集群名称',
+        //   key: 'cluster',
+        //   type: 'select',
+        //   placeholder: '请选择',
+        //   options: this.clustersList
+        // },
         {
           label: '存储IP',
           key: 'storeip',
@@ -174,7 +187,7 @@ export default {
             },
             {
               label: '启用',
-              value: 11,
+              value: 1,
               color: '#04d919'
             }
           ]
@@ -213,6 +226,11 @@ export default {
         // },
 
       ]
+    },
+    // 切换集群
+    handleChange(value) {
+      this.clustersDefault = value
+      this.getTableData()
     },
     // 列表
     clusters() {
@@ -283,7 +301,7 @@ export default {
     },
     // 表格-条件查询
     filterTableData(e) {
-      console.log(e, '9*9*9*9*99')
+      // console.log(e, '9*9*9*9*99')
       this.filter = { ...e }
       // 时间范围需要特殊处理
       delete this.filter.time

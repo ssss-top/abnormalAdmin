@@ -59,7 +59,7 @@ export default {
     //   this.$router.push('/minerList')
     //   return false
     // }
-    console.log(this.$route.query, '6556')
+    // console.log(this.$route.query, '6556')
     this.initTable()
     this.getTableData()
   },
@@ -259,7 +259,7 @@ export default {
     },
     // 表格-条件查询
     filterTableData(e) {
-      console.log(e, '9*9*9*9*99')
+      // console.log(e, '9*9*9*9*99')
       this.filter = { ...e }
       // 时间范围需要特殊处理
       delete this.filter.time
