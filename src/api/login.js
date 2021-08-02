@@ -351,7 +351,15 @@ export function migrateOverview(parameter) {
 export function workerPowerTypes(parameter) {
   const urlStr = JsonToUrl(parameter)
   return request({
-    url: `/v1/sector/worker_power_types?${urlStr}`,
+    url: `/v1/statistic/worker_power_types?${urlStr}`,
+    method: 'get'
+  })
+}
+// 算力类型列表
+export function luckyBoxPlot(parameter) {
+  const urlStr = JsonToUrl(parameter)
+  return request({
+    url: `/v1/mining/lucky_box_plot?${urlStr}`,
     method: 'get'
   })
 }

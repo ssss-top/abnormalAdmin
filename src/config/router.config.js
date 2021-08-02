@@ -125,17 +125,17 @@ export const asyncRouterMap = [
         meta: { title: 'Lotus信息列表', keepAlive: false, icon: 'usergroup-add', permission: ['dashboard'] }
       },
       {
-        path: '/migrationTask',
-        name: 'migrationTask',
-        component: () => import('@/views/migrationTask'),
-        meta: { title: '迁移任务列表', keepAlive: false, icon: 'branches', permission: ['dashboard'] }
-      },
-      {
-        path: '/storeMachine',
-        name: 'storeMachine',
-        component: () => import('@/views/storeMachine'),
-        meta: { title: '存储机列表', keepAlive: false, icon: 'branches', permission: ['dashboard'] }
+        path: '/luckyBoxPlot',
+        name: 'luckyBoxPlot',
+        component: () => import('@/views/luckyBoxPlot'),
+        meta: { title: '全网幸运值分布', keepAlive: false, icon: 'branches', permission: ['dashboard'] }
       }
+      // {
+      //   path: '/storeMachine',
+      //   name: 'storeMachine',
+      //   component: () => import('@/views/storeMachine'),
+      //   meta: { title: '存储机列表', keepAlive: false, icon: 'branches', permission: ['dashboard'] }
+      // }
 
       // 挖矿管理
       // {

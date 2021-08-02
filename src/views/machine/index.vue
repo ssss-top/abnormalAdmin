@@ -9,9 +9,9 @@
         </p>
         <span v-for="(item, key) of machineCount" :key="key" style="margin-right: 20px"> {{ key }}：{{ item }} </span>
         <p style="margin-top: 10px">迁移任务统计</p>
-        <span v-for="(item, key) of MigrationCount" :key="key" style="margin-right: 20px"> {{ key }}：{{ item }} </span>
+        <span v-for="item of MigrationCountSetting" :key="item.key" style="margin-right: 20px"> {{ item.label }}：{{ MigrationCount[item.key] }} </span>
         <p style="margin-top: 10px">存储机统计</p>
-        <span v-for="(item, key) of StoreMachineCount" :key="key" style="margin-right: 20px"> {{ key }}：{{ item }} </span>
+        <span v-for="item of StoreMachineSetting" :key="item.key" style="margin-right: 20px"> {{ item.label }}：{{ StoreMachineCount[item.key] }} </span>
       </a-card>
       <!-- <a-card title="Default size card" style="min-width: 48%">
         <p />
@@ -26,7 +26,7 @@
       <a-card title="任务时长" style="min-width: 48%; margin-top: 20px">
         <a-range-picker slot="extra" @change="taskCostscheckout" />
         <div class="node-chart">
-          <Chart id="echar:ime" ref="chart_line_tow" />
+          <Chart id="echart" ref="chart_line_tow" />
         </div>
       </a-card>
       <a-card title="节点详情" style="min-width: 100%; margin-top: 20px">
@@ -257,6 +257,67 @@ export default {
           label: 'Status',
           key: 'Status'
         }
+      ],
+      StoreMachineSetting: [
+        {
+          label: '机器数量',
+          key: 'MachineTotal'
+        },
+        {
+          label: '存满数量',
+          key: 'MachineFilled'
+        },
+        {
+          label: '未满数量',
+          key: 'MachineUnfilled'
+        },
+        {
+          label: '启用数量',
+          key: 'MachineEnabled'
+        },
+        {
+          label: '停用数量',
+          key: 'MachineDisabled'
+        },
+        {
+          label: '扇区容量',
+          key: 'MaxSectors'
+        },
+        {
+          label: '已存扇区',
+          key: 'StoredSectors'
+        },
+        {
+          label: '剩余容量',
+          key: 'RemainSectors'
+        }
+      ],
+      MigrationCountSetting: [
+        {
+          label: '待迁移数量',
+          key: 'WaitingTotal'
+        },
+        {
+          label: '迁移中数量',
+          key: 'MigratingTotal'
+        },
+        {
+          label: '已迁移数量',
+          key: 'MigratedTotal'
+        },
+        {
+          label: '最大耗时',
+          key: 'MigratedCostMax'
+        },
+        {
+          label: '最小耗时',
+          key: 'MigratedCostMin'
+        },
+        {
+          label: '平均耗时',
+          key: 'MigratedCostAvg'
+        }
+
       ],
       clustersDefault: '',
       formPopupSetting: [],
@@ -759,7 +820,8 @@ export default {
             title: '未迁移数',
             dataIndex: 'UnmigratedCount',
             key: 'UnmigratedCount',
-            align: 'center'
+            align: 'center',
+            sorter: true
           },
           {
             title: '是否密封',
@@ -847,6 +909,13 @@ export default {
             title: '扇区号',
             dataIndex: 'Number',
             key: 'Number',
+            align: 'center',
+            sorter: true
+          },
+          {
+            title: 'C2WorkerIP',
+            dataIndex: 'C2WorkerIP',
+            key: 'C2WorkerIP',
             align: 'center',
             sorter: true
           },
@@ -1212,7 +1281,6 @@ export default {
     // 迁移统计概览
     migrateOverview() {
       migrateOverview({ minerid: this.minerid }).then((res) => {
-        console.log(res, '65565656')
         const result = res.data
         if (result.code === 200) {
           this.MigrationCount = result.data.MigrationCount

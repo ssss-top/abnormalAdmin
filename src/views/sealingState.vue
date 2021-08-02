@@ -289,6 +289,7 @@ export default {
             const result = res.data
             if (result.code === 200) {
               what.$message.success('更改成功')
+              what.getTableData()
             } else {
               what.$message.error(result.msg || '更新失败')
             }

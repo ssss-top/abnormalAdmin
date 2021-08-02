@@ -24,10 +24,13 @@
           class="page-base-table"
           :fixed-width="true"
           :loading="loading"
-          :if-hide-pagination="true"
+          :item-total="pagination.total"
+          :page-size="pagination.pageSize"
+          :current="pagination.current"
           @lookMininglog="lookMininglog"
           @lookcourse="lookcourse"
           @tableChange="tableChange"
+          @pageChange="handleTableChange"
         >
           <!-- <span slot="LuckyValue" slot-scope="record">{{ record.text }} 45455</span> -->
           <!-- <a-popover v-if="record.listText" slot="LuckyValue" slot-scope="record" placement="bottom">
@@ -90,6 +93,7 @@
           :loading="detilsLoading"
           :scroll="{type:1}"
           @pageChange="handleTableChangeDetils"
+          @tableChange="tableChangeDetils"
         >
         <!-- <span slot="title"></span> -->
         </BaseTable>
@@ -120,6 +124,11 @@ export default {
       detilsLoading: false,
       clustersList: [],
       tableDataDetils: [],
+      pagination: {
+        total: 0,
+        pageSize: 10,
+        current: 1
+      },
       paginationError: {
         total: 0,
         pageSize: 10,
@@ -129,6 +138,12 @@ export default {
         sort_field: '',
         sort_order: ''
       },
+      sortDetils:
+        {
+          sort_field: '',
+          sort_order: ''
+        },
+
       tableColumnsError: [
         {
           title: '扇区序号',
@@ -183,7 +198,8 @@ export default {
           title: 'StoreIP',
           dataIndex: 'StoreIP',
           key: 'StoreIP',
-          align: 'center'
+          align: 'center',
+          sorter: true
         },
         {
           title: ' StorePath',
@@ -478,6 +494,28 @@ export default {
 
       this.getTableData()
     },
+    // 错误详情排序
+    tableChangeDetils(sorter) {
+      console.log(sorter, '121211')
+      if (sorter.order === 'descend') {
+        this.sortDetils.sort_order = 'Desc'
+      } else if (sorter.order === 'ascend') {
+        this.sortDetils.sort_order = 'Asc'
+      } else {
+        this.sortDetils.sort_order = ''
+      }
+      this.sortDetils.sort_field = sorter.columnKey
+
+      this.getTableDataDetils()
+    },
+    // 列表详情翻页
+    handleTableChange(pagination) {
+      const pager = { ...this.pagination }
+      pager.current = pagination.pageNumber
+      pager.pageSize = pagination.pageSize
+      this.pagination = pager
+      this.getTableData()
+    },
     // 错误详情翻页
     handleTableChangeDetils(pagination) {
       const pager = { ...this.paginationError }
@@ -492,6 +530,8 @@ export default {
         page: this.paginationError.current,
         size: this.paginationError.pageSize
       }
+      params.sort_field = this.sortDetils.sort_field
+      params.sort_order = this.sortDetils.sort_order
       faultySectors(params).then(res => {
         this.detilsLoading = false
         const result = res.data
@@ -510,21 +550,22 @@ export default {
     },
     // 查看爆块日志
     lookMininglog(e) {
-      this.$router.push('/blockMininglog?minerid=' + e.Miner)
+      this.$router.push('/blockMininglog?minerid=' + e.MinerID)
     },
     // 查看程序进程
     lookcourse(e) {
-      this.$router.push('/procedureCourse?minerid=' + e.Miner)
+      this.$router.push('/procedureCourse?minerid=' + e.MinerID)
     },
     lookDeadline(value) {
-      const minerid = value.record.Miner
+      const minerid = value.record.MinerID
       // if (value.text > 0) {
       this.$router.push('/machine?minerid=' + minerid)
       // }
     },
     lookError(value) {
-      this.minerid = value.record.Miner
+      this.minerid = value.record.MinerID
       this.detilsLoading = true
+      this.paginationError.current = 1
       if (value.text > 0) {
         this.visible = true
         this.getTableDataDetils()
@@ -536,6 +577,8 @@ export default {
       if (this.loading === true) return
       this.loading = true
       const params = this.generateParams()
+      params.page = this.pagination.current
+      params.size = this.pagination.pageSize
       // params.cluster = this.clustersDefault
       params.sort_field = this.sort.sort_field
       params.sort_order = this.sort.sort_order
@@ -544,6 +587,7 @@ export default {
         const result = res.data
         if (result.code === 200) {
           this.tableData = result.data.miners
+          this.pagination.total = result.data.total || 0
         } else {
           this.$message.error(result.msg)
         }
