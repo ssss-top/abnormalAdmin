@@ -31,10 +31,7 @@ export default {
   },
   methods: {
     initChart(rowData, data) {
-      console.log(rowData, data)
       this.data.push(echarts.dataTool.prepareBoxplotData(data))
-      // this.data.push(echarts.dataTool.prepareBoxplotData(this.blockBoxData))
-      // this.id = 'chart' + Date.parse(new Date())
       this.myChart = echarts.init(
         document.getElementById(this.id),
       )
@@ -78,6 +75,7 @@ export default {
         xAxis: {
           type: 'category',
           boundaryGap: true,
+          data: rowData,
           nameGap: 30,
           splitArea: {
             show: true
@@ -101,14 +99,27 @@ export default {
 
         series: [
           {
-            name: 'boxplot',
+            name: '全网幸运值',
             type: 'boxplot',
-            datasetIndex: 1
+            datasetIndex: 1,
+            tooltip: {
+              formatter: function(param) {
+                return [
+                  param.name,
+                  'max: ' + param.data[5].toFixed(2),
+                  'Q3: ' + param.data[4].toFixed(2),
+                  'mid: ' + param.data[3].toFixed(2),
+                  'Q1: ' + param.data[2].toFixed(2),
+                  'min: ' + param.data[1].toFixed(2)
+                ].join('<br/>')
+              }
+            }
           },
           {
             name: 'outlier',
             type: 'scatter',
-            datasetIndex: 2
+            datasetIndex: 2,
+            data: this.data.outliers
           }
 
         ]
@@ -160,6 +171,6 @@ export default {
   }
 }
 .echart {
-  height: 450px;
+  height: 550px;
 }
 </style>

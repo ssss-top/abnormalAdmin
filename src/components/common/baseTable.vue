@@ -361,7 +361,6 @@ export default {
   methods: {
     // 表格过滤排序字段发生变化
     tableChange(pagination, filters, sorter) {
-      // console.log(sorter, '111111111111111111111111111111')
       this.emitEvent('tableChange', sorter)
     },
     // 选择表单项变化，会发事件

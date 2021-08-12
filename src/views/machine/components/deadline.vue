@@ -1,71 +1,61 @@
 <template>
-  <page-header-wrapper>
-    <!-- 表格数据过滤器 -->
-    <a-card size="small" :bordered="false">
-      <!-- <table-filter :settings="filterSettings" @submit="filterTableData" /> -->
-      <!-- 表格 开始 -->
-      <div style="margin-top: 20px">
-        <BaseTable
-          ref="table"
-          :columns="tableColumns"
-          :data="tableData"
-          class="page-base-table"
-          :fixed-width="true"
-          :loading="loading"
-          :if-hide-pagination="true"
-        >
+  <!-- 表格数据过滤器 -->
+  <div class="tables">
+    <!-- 表格 开始 -->
+    <BaseTable
+      :id="'Number'"
+      ref="tableMain"
+      :columns="tableColumns"
+      :data="tableData"
+      class="page-base-table"
+      :fixed-width="true"
+      :loading="loading"
+      :if-hide-pagination="true"
+    >
+      <span slot="text" slot-scope="record" :class="record.record.IsCurrent === true ? 'red' : ''">{{ record.text }}</span>
+      <span slot="IP" slot-scope="record" style="text-decoration: underline; cursor: pointer" @click="showIp(record)">{{
+        record.text
+      }}</span>
+      <!-- slotName: 'toFixed' -->
+      <span slot="toFixed" slot-scope="record">{{ record.text?Number(record.text).toFixed(2):'0' }}</span>
+    </BaseTable>
+  </div>
 
-          <!-- <a-popover v-if="record.listText" slot="LuckyValue" slot-scope="record" placement="bottom">
-            <template slot="content">
-              <BaseTable
-                ref="table"
-                :columns="ableColumnsPopover"
-                :data="record.listText"
-                class="page-base-table"
-                :fixed-width="true"
-                :loading="loading"
-                :if-hide-pagination="true"
-              />
-            </template>
-            <a-button>{{ record.text }}</a-button>
-          </a-popover>
-          <span v-else>{{ record.text }} </span> -->
-          <span slot="text" slot-scope="record" :class="record.record.IsCurrent===true?'red':''">{{ record.text }}</span>
-        </BaseTable>
-      </div>
-
-    </a-card>
-  </page-header-wrapper>
 </template>
 <script>
-import { wdpostDeadlines } from '@/api/api'
+import {
+  wdpostDeadlines
+} from '@/api/api'
+
 import BaseTable from '@/components/common/baseTable.vue'
 export default {
   components: {
     // Pagination
     BaseTable
+    // BaseFormPopup
+  },
+  props: {
+    minerid: {
+      type: String,
+      default: null
+    }
   },
   data() {
     return {
-      // filterSettings: [],
+      pagination: false,
       tableColumns: [],
       tableData: [],
-      loading: false,
-      minerid: ''
+      loading: false
     }
   },
+
   created() {
-    this.minerid = this.$route.query.minerid
-    if (!this.minerid) {
-      this.$router.push('/minerList')
-      return false
-    }
-    // console.log(this.$route.query, '6556')
     this.initTable()
     this.getTableData()
   },
   methods: {
 
+    // 表格配置
     initTable() {
       this.tableColumns = [
         {
@@ -75,7 +65,6 @@ export default {
           align: 'center',
           scopedSlots: { customRender: 'MinerID' },
           slotName: 'text'
-
         },
         {
           title: 'Deadline',
@@ -167,24 +156,13 @@ export default {
         }
       ]
     },
-    // 处理表格翻页
-    handleTableChange(pagination) {
-      // this.selectedRowKeys = []
-      // this.popupFormValue.BoxIdList = []
-      // this.$set(this.popupFormValue, 'BoxIdList', [])
-      this.page = pagination.pageNumber
-      this.size = pagination.pageSize
-      this.getTableData()
-    },
+
     // 获取表格数据
     getTableData() {
       if (this.loading === true) return
       this.loading = true
-      // const params = this.generateParams()
       const params = {
         minerid: this.minerid
-        // page: this.page,
-        // size: this.size
       }
       wdpostDeadlines(params).then((res) => {
         this.loading = false
@@ -194,12 +172,18 @@ export default {
         } else {
           this.$message.error(result.msg)
         }
-      }).catch(error => {
-        this.loading = false
-        console.log(error)
       })
-    }
+    },
 
+    // 生成获取表格数据的请求参数
+    generateParams() {
+      const params = {
+        minerid: this.minerid
+      }
+      // Object.assign(params)
+      return params
+    }
   }
 }
 </script>
+

@@ -16,6 +16,9 @@ const defaultRoutePath = '/dashboard/home'
 
 router.beforeEach((to, from, next) => {
   NProgress.start() // start progress bar
+  // console.log(to, from, '5454545454545454545')
+  // this.$route.meta.keepAlive = true
+  to.meta.keepAlive = true
   to.meta && (typeof to.meta.title !== 'undefined' && setDocumentTitle(`${i18nRender(to.meta.title)} - ${domTitle}`))
   /* has token */
   if (storage.get(ACCESS_TOKEN)) {

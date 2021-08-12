@@ -190,7 +190,7 @@
           <!-- <div v-else-if="item.type==='textarea'">{{ initialValues[item.key] }}</div> -->
           <a-textarea
             v-else-if="item.type==='textarea'"
-            v-decorator="item.required && [
+            v-decorator="[
               item.key,
               { initialValue: initialValues[item.key],
                 rules: item.required && [

@@ -17,7 +17,9 @@
           :item-total="total"
           @pageChange="handleTableChange"
         >
-          <!-- <span slot="CreatedAt" slot-scope="record">{{ moment(record.text).format('YYYY-MM-DD HH:mm:ss') }}</span> -->
+          <div slot="list" slot-scope="record">
+            <p class="link" @click="link(record.text)">{{ record.text }}</p>
+          </div>
         </BaseTable>
       </div>
 
@@ -25,7 +27,7 @@
   </page-header-wrapper>
 </template>
 <script>
-import { miningLogs } from '@/api/login'
+import { miningLogs } from '@/api/api'
 import BaseTable from '@/components/common/baseTable.vue'
 import * as moment from 'moment'
 export default {
@@ -45,6 +47,34 @@ export default {
       size: 10,
       total: 10
     }
+  },
+  computed: {
+    onQuery: function() {
+      return this.$route.query.minerid
+    }
+  },
+  watch: {
+    'onQuery'(old, newValue) {
+      if (newValue) {
+        this.minerid = this.$route.query.minerid
+        if (this.minerid) {
+          this.getTableData()
+        }
+      }
+    },
+    immediate: true
+  },
+  link(item) {
+    window.open('https://filfox.info/zh/tipset/' + item, '_blank')
+  },
+  activated() {
+    this.minerid = this.$route.query.minerid
+    if (!this.minerid) {
+      this.$router.push('/minerList')
+      return false
+    }
+    // console.log(this.$route.query, '6556')
+    this.getTableData()
   },
   created() {
     this.minerid = this.$route.query.minerid
@@ -86,7 +116,9 @@ export default {
           title: '高度',
           dataIndex: 'Height',
           key: 'Height',
-          align: 'center'
+          align: 'center',
+          scopedSlots: { customRender: 'Height' },
+          slotName: 'list'
         },
         {
           title: 'WinCount',
@@ -148,6 +180,9 @@ export default {
         } else {
           this.$message.error(result.msg)
         }
+      }).catch(error => {
+        this.loading = false
+        console.log(error)
       })
     },
     // 表格-条件查询
@@ -155,11 +190,12 @@ export default {
       // console.log(e, '9*9*9*9*99')
       this.filter = { ...e }
       // 时间范围需要特殊处理
-      delete this.filter.time
+
       // console.log(this.moment(e.time[0]).format('YYYY-MM-DD HH:mm:ss'), this.moment(e.time[1]).format('YYYY-MM-DD HH:mm:ss'))
-      if (e.time) {
-        this.filter.start_at = this.moment(e.time[0]).format('YYYY-MM-DD HH:mm:ss')
-        this.filter.end_at = this.moment(e.time[1]).format('YYYY-MM-DD HH:mm:ss')
+      if (e.time && e.time.length) {
+        this.filter.start_time = this.moment(e.time[0]).format('YYYY-MM-DD HH:mm:ss')
+        this.filter.end_time = this.moment(e.time[1]).format('YYYY-MM-DD HH:mm:ss')
+        delete this.filter.time
       }
       this.page = 1
       this.getTableData()
@@ -168,3 +204,10 @@ export default {
   }
 }
 </script>
+<style lang="less" scoped>
+.link{
+text-decoration: underline;
+cursor: pointer;
+margin-bottom: 0;
+}
+</style>

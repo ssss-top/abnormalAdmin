@@ -56,7 +56,11 @@
       <!-- {{ settings }}1111111111 -->
       <multi-tab v-if="settings.multiPage" />
       <transition name="page-transition">
-        <router-view />
+
+        <keep-alive v-if="$route.meta.keepAlive">
+          <router-view />
+        </keep-alive>
+        <router-view v-if="!$route.meta.keepAlive" />
       </transition>
     </a-layout-content>
   </pro-layout>

@@ -1,5 +1,5 @@
 import storage from 'store'
-import { login, getInfo } from '@/api/login'
+import { login, getInfo } from '@/api/api'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 import { welcome } from '@/utils/util'
 

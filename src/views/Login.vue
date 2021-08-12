@@ -154,7 +154,7 @@ import { mapActions } from 'vuex'
 import { timeFix } from '@/utils/util'
 // import storage from 'store'
 // import { ACCESS_TOKEN } from '@/store/mutation-types'
-// import { getSmsCaptcha, get2step } from '@/api/login'
+// import { getSmsCaptcha, get2step } from '@/api/api'
 
 export default {
   components: {

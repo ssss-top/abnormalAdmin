@@ -22,7 +22,7 @@
   </page-header-wrapper>
 </template>
 <script>
-import { processes } from '@/api/login'
+import { processes } from '@/api/api'
 import BaseTable from '@/components/common/baseTable.vue'
 export default {
   components: {
@@ -37,6 +37,31 @@ export default {
       loading: false,
       minerid: ''
     }
+  },
+  computed: {
+    onQuery: function() {
+      return this.$route.query.minerid
+    }
+  },
+  watch: {
+    'onQuery'(old, newValue) {
+      if (newValue) {
+        this.minerid = this.$route.query.minerid
+        console.log(this.minerid, '12212122')
+        if (this.minerid) {
+          this.getTableData()
+        }
+      }
+    },
+    immediate: true
+  },
+  activated() {
+    this.minerid = this.$route.query.minerid
+    if (!this.minerid) {
+      this.$router.push('/minerList')
+      return false
+    }
+    this.getTableData()
   },
   created() {
     this.minerid = this.$route.query.minerid
@@ -91,7 +116,7 @@ export default {
           key: 'ShutdownAt',
           align: 'center',
           type: 'formatTime',
-          scopedSlots: { customRender: 'StartUpAt' }
+          scopedSlots: { customRender: 'ShutdownAt' }
         },
         {
           title: '心跳时间',
@@ -99,7 +124,7 @@ export default {
           key: 'Heartbeat',
           align: 'center',
           type: 'formatTime',
-          scopedSlots: { customRender: 'StartUpAt' }
+          scopedSlots: { customRender: 'Heartbeat' }
         }
 
       ]
@@ -131,6 +156,9 @@ export default {
         } else {
           this.$message.error(result.msg)
         }
+      }).catch(error => {
+        this.loading = false
+        console.log(error)
       })
     }
 

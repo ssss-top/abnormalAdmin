@@ -43,20 +43,13 @@ export default {
   },
   render () {
     // return <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-4801326429087140" data-ad-slot="6929057621" />
-    return <div class="business-pro-ad"><a href="https://store.antdv.com/pro/" target="_blank"></a></div>;
+    return <div class="business-pro-ad"></div>;
   }
 }
 </script>
 
 <style lang="less" scoped>
 .business-pro-ad {
-  position: fixed;
-  background: rgba(255,255,255,0.25);
-  left: 0;
-  bottom: 0;
-  padding: 0 12px;
-  height: 48px;
-  width: 258px;
-  z-index: 99;
+  display: none;
 }
 </style>

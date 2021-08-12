@@ -1,5 +1,8 @@
 <template>
-  <page-header-wrapper>
+  <div class="node-content">
+    <div class="title">
+      <span>{{ title }}</span>
+    </div>
     <!-- 表格数据过滤器 -->
     <div class="card-list">
       <a-card title="矿机数量" style="min-width: 100%">
@@ -30,27 +33,8 @@
           <p v-for="(item, index) in sectorState" :key="index" class="detail-item">{{ item }}</p>
         </div>
       </a-card>
-
-      <a-card size="small" :bordered="false">
-        <a-radio-group v-model="mode" :style="{ marginBottom: '8px' }" @change="listChange">
-          <a-radio-button value="0"> 机器算力 </a-radio-button>
-          <a-radio-button value="1"> 任务列表 </a-radio-button>
-          <a-radio-button value="2"> Deadline </a-radio-button>
-          <a-radio-button value="3"> 扇区列表 </a-radio-button>
-          <a-radio-button value="4"> 迁移任务 </a-radio-button>
-          <a-radio-button value="5"> 存储机列表 </a-radio-button>
-          <a-radio-button value="6"> 恢复任务 </a-radio-button>
-        </a-radio-group>
-        <workerPower v-if="mode === '0'" :minerid="minerid" />
-        <workerList v-if="mode === '1'" :minerid="minerid" />
-        <deadline v-if="mode === '2'" :minerid="minerid" />
-        <minerSectors v-if="mode === '3'" :minerid="minerid" />
-        <migrateTasks v-if="mode === '4'" :minerid="minerid" />
-        <storeMachines v-if="mode === '5'" :minerid="minerid" />
-        <restoreTasks v-if="mode === '6'" :minerid="minerid" />
-      </a-card>
     </div>
-  </page-header-wrapper>
+  </div>
 </template>
 <script>
 import {
@@ -61,23 +45,29 @@ import {
 } from '@/api/api'
 import Chart from '@/components/common/chart.vue'
 import * as moment from 'moment'
-import workerPower from './components/workerPower'
-import workerList from './components/workerList'
-import deadline from './components/deadline'
-import minerSectors from './components/minerSectors'
-import migrateTasks from './components/migrateTasks'
-import storeMachines from './components/storeMachines'
-import restoreTasks from './components/restoreTasks'
+// import workerPower from './components/workerPower'
+// import workerList from './components/workerList'
+// import deadline from './components/deadline'
+// import minerSectors from './components/minerSectors'
+// import migrateTasks from './components/migrateTasks'
+// import storeMachines from './components/storeMachines'
+// import restoreTasks from './components/restoreTasks'
 export default {
   components: {
-    Chart,
-    workerPower,
-    workerList,
-    deadline,
-    minerSectors,
-    migrateTasks,
-    storeMachines,
-    restoreTasks
+    Chart
+    // workerPower,
+    // workerList,
+    // deadline,
+    // minerSectors,
+    // migrateTasks,
+    // storeMachines,
+    // restoreTasks
+  },
+  props: {
+    title: {
+      type: String,
+      default: null
+    }
   },
   data() {
     return {
@@ -93,7 +83,6 @@ export default {
       taskCostsSearch: {},
       sectorsCountList: [],
       sectorsCountSearch: {},
-
       StoreMachineSetting: [
         {
           label: '机器数量',
@@ -158,29 +147,17 @@ export default {
 
     }
   },
-  computed: {
-    onQuery: function() {
-      return this.$route.query.minerid
-    }
-  },
-  watch: {
-    'onQuery'(old, newValue) {
-      if (newValue) {
-        this.minerid = this.$route.query.minerid
-        console.log(this.minerid, '12212122')
-        if (this.minerid) {
-          this.init()
-        }
-      }
-    }
-  },
-  activated() {
+  created() {
     this.init()
   },
   // created() {
   //   this.init()
   // },
   methods: {
+    // 切换菜单
+    switchTab(e) {
+      console.log(e, '2112')
+    },
     init() {
       this.minerid = this.$route.query.minerid
       if (!this.minerid) {
@@ -287,11 +264,11 @@ export default {
           this.$message.error(result.msg)
         }
       })
-    },
-    // tab切换
-    listChange(e) {
-      console.log(e.target.value, '511515')
     }
+    // tab切换
+    // listChange(e) {
+    //   console.log(e.target.value, '511515')
+    // }
   }
 }
 </script>

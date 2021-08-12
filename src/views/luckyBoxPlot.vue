@@ -12,15 +12,15 @@
         </a-select-option>
       </a-select>
     </div>
-    <div style="width:100%;height:450px;">
+    <div style="width:100%;height:550px;">
       <ChartTool v-if="chart" :id="id" ref="chart_tool" />
-      <a-spin v-else size="large" style="margin:auto" />
+      <a-spin v-else size="large" style="margin:auto;position: absolute;left: 0;right: 0;top: 40%;" />
     </div>
   </a-card>
 </template>
 
 <script>
-import { luckyBoxPlot } from '@/api/login'
+import { luckyBoxPlot } from '@/api/api'
 import ChartTool from '@/components/common/chartTool.vue'
 // import dataTool from 'dataTool'
 export default {
@@ -39,7 +39,7 @@ export default {
       redBoxDataItems: [],
       duration: '',
       periodList: [
-        { label: '24h小时', value: '24h' },
+        { label: '24小时', value: '24h' },
         { label: '7天', value: '7d' },
         { label: '30天', value: '30d' }
       ]
@@ -76,6 +76,9 @@ export default {
         } else {
           this.$message.error(result.msg)
         }
+      }).catch(error => {
+        this.loading = false
+        console.log(error)
       })
     }
 
@@ -123,7 +126,5 @@ export default {
     border-radius: 0px 0px 8px 8px;
   }
 }
-.echart {
-  height: 450px;
-}
+
 </style>

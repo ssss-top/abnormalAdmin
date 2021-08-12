@@ -17,7 +17,9 @@
           :item-total="total"
           @pageChange="handleTableChange"
         >
-          <!-- <span slot="CreatedAt" slot-scope="record">{{ moment(record.text).format('YYYY-MM-DD HH:mm:ss') }}</span> -->
+          <div slot="list" slot-scope="record">
+            <p class="link" @click="link(record.text)">{{ record.text }}</p>
+          </div>
         </BaseTable>
       </div>
 
@@ -25,7 +27,7 @@
   </page-header-wrapper>
 </template>
 <script>
-import { lotusinfos, clusters } from '@/api/login'
+import { lotusinfos, clusters } from '@/api/api'
 import BaseTable from '@/components/common/baseTable.vue'
 import * as moment from 'moment'
 export default {
@@ -63,11 +65,38 @@ export default {
     initTable() {
       this.filterSettings = [
         {
-          label: '矿工号',
-          key: 'minerid',
+          label: 'IP',
+          key: 'ip',
           type: 'input',
-          placeholder: '矿工号',
+          placeholder: 'IP',
           style: 'width:200px'
+        },
+        {
+          label: '内网IP',
+          key: 'innerip',
+          type: 'input',
+          placeholder: '内网IP',
+          style: 'width:200px'
+        },
+        {
+          label: '状态',
+          key: 'status',
+          type: 'select',
+          placeholder: '请选择',
+          options: [
+            {
+              label: '全部',
+              value: ''
+            },
+            {
+              label: '异常',
+              value: 'Differ'
+            },
+            {
+              label: '正常',
+              value: 'Normal'
+            }
+          ]
         },
         {
           label: '集群名称',
@@ -75,12 +104,12 @@ export default {
           type: 'select',
           placeholder: '请选择',
           options: this.clustersList
-        },
-        {
-          label: '起止时间',
-          key: 'time',
-          type: 'daterange'
         }
+        // {
+        //   label: '起止时间',
+        //   key: 'time',
+        //   type: 'daterange'
+        // }
 
       ]
       this.tableColumns = [
@@ -126,7 +155,20 @@ export default {
           title: '状态',
           dataIndex: 'Status',
           key: 'Status',
-          align: 'center'
+          align: 'center',
+          scopedSlots: { customRender: 'Status' },
+          colorMarks: [
+            {
+              label: '异常',
+              value: 'Differ',
+              color: '#f5222d'
+            },
+            {
+              label: '正常',
+              value: 'Normal',
+              color: '#04d919'
+            }
+          ]
           // scopedSlots: { customRender: 'CreatedAt' }
         },
         {
@@ -139,7 +181,9 @@ export default {
           title: '当前高度',
           dataIndex: 'CurrentHeight',
           key: 'CurrentHeight',
-          align: 'center'
+          align: 'center',
+          scopedSlots: { customRender: 'CurrentHeight' },
+          slotName: 'list'
         },
         {
           title: '目前高度',
@@ -174,10 +218,13 @@ export default {
           key: 'UpdatedAt',
           align: 'center',
           type: 'formatTime',
-          scopedSlots: { customRender: 'CreatedAt' }
+          scopedSlots: { customRender: 'UpdatedAt' }
         }
 
       ]
+    },
+    link(item) {
+      window.open('https://filfox.info/zh/tipset/' + item, '_blank')
     },
     // 列表
     clusters() {
@@ -228,6 +275,9 @@ export default {
         } else {
           this.$message.error(result.msg)
         }
+      }).catch(error => {
+        this.loading = false
+        console.log(error)
       })
     },
     // 表格-条件查询
@@ -235,9 +285,9 @@ export default {
       this.filter = { ...e }
       // 时间范围需要特殊处理
       delete this.filter.time
-      if (e.time) {
-        this.filter.start_at = this.moment(e.time[0]).format('YYYY-MM-DD HH:mm:ss')
-        this.filter.end_at = this.moment(e.time[1]).format('YYYY-MM-DD HH:mm:ss')
+      if (e.time && e.time.length) {
+        this.filter.start_time = this.moment(e.time[0]).format('YYYY-MM-DD HH:mm:ss')
+        this.filter.end_time = this.moment(e.time[1]).format('YYYY-MM-DD HH:mm:ss')
       }
       this.page = 1
       this.getTableData()
@@ -246,3 +296,10 @@ export default {
   }
 }
 </script>
+<style lang="less" scoped>
+.link{
+text-decoration: underline;
+cursor: pointer;
+margin-bottom: 0;
+}
+</style>

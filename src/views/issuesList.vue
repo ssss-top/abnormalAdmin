@@ -74,7 +74,7 @@
   </page-header-wrapper>
 </template>
 <script>
-import { clusters, hardwareIssues, setHardwareIssue, hardwareIssueType, setHardwareIssueSstatus } from '@/api/login'
+import { clusters, hardwareIssues, setHardwareIssue, hardwareIssueType, setHardwareIssueSstatus } from '@/api/api'
 import BaseFormPopup from '@/components/common/BaseFormPopup.vue'
 import BaseTable from '@/components/common/baseTable.vue'
 import * as moment from 'moment'
@@ -213,10 +213,12 @@ export default {
 
     selectChange() {},
     handleOk(from) {
+      console.log(from)
+      console.log(this.popupFormValue)
       // from.BoxIdList = this.popupFormValue.BoxIdList
       // const params = { ...this.popupFormValue }
       // params.ip = this.popupFormValue.ip.split(',')
-      if (!Array.isArray(from.IP)) {
+      if (!Array.isArray(this.popupFormValue.IP)) {
         from.IP = from.IP.split(',')
       }
       let url
@@ -559,6 +561,9 @@ export default {
         } else {
           this.$message.error(result.msg)
         }
+      }).catch(error => {
+        this.loading = false
+        console.log(error)
       })
     },
     // 生成获取表格数据的请求参数
@@ -603,9 +608,9 @@ export default {
       this.filter = { ...e }
       // 时间范围需要特殊处理
       delete this.filter.time
-      if (e.time) {
-        this.filter.start_at = this.moment(e.time[0]).format('YYYY-MM-DD HH:mm:ss')
-        this.filter.end_at = this.moment(e.time[1]).format('YYYY-MM-DD HH:mm:ss')
+      if (e.time && e.time.length) {
+        this.filter.start_time = this.moment(e.time[0]).format('YYYY-MM-DD HH:mm:ss')
+        this.filter.end_time = this.moment(e.time[1]).format('YYYY-MM-DD HH:mm:ss')
       }
       this.pagination.current = 1
       this.getTableData()

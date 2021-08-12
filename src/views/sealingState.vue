@@ -28,7 +28,7 @@
   </page-header-wrapper>
 </template>
 <script>
-import { sealingState, setSealingState } from '@/api/login'
+import { sealingState, setSealingState, clusters } from '@/api/api'
 import BaseTable from '@/components/common/baseTable.vue'
 export default {
   components: {
@@ -40,6 +40,7 @@ export default {
       filterSettings: [],
       tableColumns: [],
       tableData: [],
+      clustersList: [],
       loading: false,
       minerid: '',
       sort: {
@@ -59,6 +60,7 @@ export default {
     //   return false
     // }
     // console.log(this.$route.query, '6556')
+    this.clusters()
     this.initTable()
     this.getTableData()
   },
@@ -66,6 +68,13 @@ export default {
 
     initTable() {
       this.filterSettings = [
+        {
+          label: '集群名称',
+          key: 'cluster',
+          type: 'select',
+          placeholder: '请选择',
+          options: this.clustersList
+        },
         {
           label: '矿工ID',
           key: 'minerid',
@@ -266,9 +275,23 @@ export default {
 
       ]
     },
+    // 集群名称下拉列表
+    clusters() {
+      clusters().then(res => {
+        const data = res.data
+        if (data.code === 200) {
+          this.clustersList = []
+          data.data.clusters.forEach(item => {
+            this.clustersList.push({ label: item.Name, value: item.Name, ClientID: item.ClientID })
+          })
+          this.initTable()
+          // this.clustersList = data.data.clusters
+          // this.clustersDefault = this.clustersList[0].label
+        }
+      })
+    },
     // 设置密封状态
     SetSealing(e) {
-      console.log(e, '1211212')
       const sealing = e.Sealing === 0 ? 1 : 0
       let text = ''
       if (sealing) {
@@ -323,7 +346,9 @@ export default {
     },
     lookDetails(e) {
       // console.log(e, '45445545454545')
-      this.$router.push('/machine?minerid=' + e.MinerID)
+      // this.$router.resolve('/nodeDetails?minerid=' + e.MinerID)
+      const routeData = this.$router.resolve({ path: '/nodeDetails', query: { minerid: e.MinerID }})
+      window.open(routeData.href, '_blank')
     },
     // 处理表格翻页
     handleTableChange(pagination) {
@@ -358,6 +383,9 @@ export default {
         } else {
           this.$message.error(result.msg)
         }
+      }).catch(error => {
+        this.loading = false
+        console.log(error)
       })
     }
 

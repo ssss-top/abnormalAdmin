@@ -102,7 +102,7 @@
   </page-header-wrapper>
 </template>
 <script>
-import { minerList, faultySectors, clusters } from '@/api/login'
+import { minerList, faultySectors, clusters } from '@/api/api'
 import BaseTable from '@/components/common/baseTable.vue'
 export default {
   components: {
@@ -240,6 +240,10 @@ export default {
       ]
     }
   },
+  // activated() {
+  //   this.getTableData()
+  //   this.clusters()
+  // },
   created() {
     this.getTableData()
     this.clusters()
@@ -337,7 +341,7 @@ export default {
         {
           title: '幸运值（7d）',
           dataIndex: 'LuckyValue7dStr',
-          key: 'LuckyValue7dStr',
+          key: 'LuckyValue7d',
           align: 'center',
           sorter: true
           // scopedSlots: { customRender: 'LuckyValue7dStr' },
@@ -541,6 +545,9 @@ export default {
         } else {
           this.$message.error(result.msg)
         }
+      }).catch(error => {
+        this.detilsLoading = false
+        console.log(error)
       })
     },
 
@@ -559,7 +566,9 @@ export default {
     lookDeadline(value) {
       const minerid = value.record.MinerID
       // if (value.text > 0) {
-      this.$router.push('/machine?minerid=' + minerid)
+      // this.$router.push('/machine?minerid=' + minerid)
+      const routeData = this.$router.resolve({ path: '/nodeDetails', query: { minerid: minerid }})
+      window.open(routeData.href, '_blank')
       // }
     },
     lookError(value) {
@@ -591,6 +600,9 @@ export default {
         } else {
           this.$message.error(result.msg)
         }
+      }).catch(error => {
+        this.loading = false
+        console.log(error)
       })
     },
     generateParams() {

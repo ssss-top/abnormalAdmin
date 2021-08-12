@@ -18,7 +18,7 @@
           @pageChange="handleTableChange"
         >
           <div slot="list" slot-scope="record">
-            <p v-for="(item,index) in record.text" :key="index">{{ item }}</p>
+            <p v-for="(item,index) in record.text" :key="index" class="link" :style="(record.text.length-1)===index?'margin-bottom:0;':''" @click="link(item)">{{ item }}</p>
           </div>
         </BaseTable>
       </div>
@@ -27,7 +27,7 @@
   </page-header-wrapper>
 </template>
 <script>
-import { backtracks } from '@/api/login'
+import { backtracks } from '@/api/api'
 import BaseTable from '@/components/common/baseTable.vue'
 import * as moment from 'moment'
 export default {
@@ -59,7 +59,9 @@ export default {
     this.getTableData()
   },
   methods: {
-
+    link(item) {
+      window.open('https://filfox.info/zh/tipset/' + item, '_blank')
+    },
     initTable() {
       this.filterSettings = [
         {
@@ -202,17 +204,20 @@ export default {
         } else {
           this.$message.error(result.msg)
         }
+      }).catch(error => {
+        this.loading = false
+        console.log(error)
       })
     },
     // 表格-条件查询
     filterTableData(e) {
-      // console.log(e, '9*9*9*9*99')
+      console.log(e.time, '9*9*9*9*99')
       this.filter = { ...e }
       // 时间范围需要特殊处理
       delete this.filter.time
-      if (e.time) {
-        this.filter.start_at = this.moment(e.time[0]).format('YYYY-MM-DD HH:mm:ss')
-        this.filter.end_at = this.moment(e.time[1]).format('YYYY-MM-DD HH:mm:ss')
+      if (e.time && e.time.length) {
+        this.filter.start_time = this.moment(e.time[0]).format('YYYY-MM-DD HH:mm:ss')
+        this.filter.end_time = this.moment(e.time[1]).format('YYYY-MM-DD HH:mm:ss')
       }
       this.minerid = e.minerid
       this.page = 1
@@ -222,3 +227,9 @@ export default {
   }
 }
 </script>
+<style lang="less" scoped>
+.link{
+text-decoration: underline;
+cursor: pointer;
+}
+</style>

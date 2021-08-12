@@ -67,7 +67,7 @@
   </page-header-wrapper>
 </template>
 <script>
-import { bseJobsList, bseJobsSubmit, bseJobItemList } from '@/api/login'
+import { bseJobsList, bseJobsSubmit, bseJobItemList } from '@/api/api'
 // import BaseFormPopup from '@/components/baseFormPopup/index.vue'
 import BaseTable from '@/components/common/baseTable.vue'
 export default {
@@ -367,6 +367,9 @@ export default {
         } else {
           this.$message.error(result.Msg)
         }
+      }).catch(error => {
+        this.loading = false
+        console.log(error)
       })
     },
     getTableDataDetils(value) {
@@ -422,8 +425,8 @@ export default {
       // 时间范围需要特殊处理
       delete this.filter.daterange
       if (e.daterange) {
-        this.filter.start_at = e.daterange[0]
-        this.filter.end_at = e.daterange[1]
+        this.filter.start_time = e.daterange[0]
+        this.filter.end_time = e.daterange[1]
       }
       this.pagination.current = 1
       this.getTableData()

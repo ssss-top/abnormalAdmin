@@ -363,6 +363,35 @@ export function luckyBoxPlot(parameter) {
     method: 'get'
   })
 }
+// 算力类型列表
+export function restoreTasks(parameter) {
+  const urlStr = JsonToUrl(parameter)
+  return request({
+    url: `/v1/sector/restore_tasks?${urlStr}`,
+    method: 'get'
+  })
+}
+export function addRestoreTasks(parameter) {
+  return request({
+    url: `/v1/sector/add_restore_tasks`,
+    method: 'post',
+    data: parameter
+  })
+}
+export function setRestoreTask(parameter) {
+  return request({
+    url: `/v1/sector/set_restore_task`,
+    method: 'post',
+    data: parameter
+  })
+}
+export function delRestoreTasks(parameter) {
+  return request({
+    url: `/v1/sector/del_restore_tasks`,
+    method: 'post',
+    data: parameter
+  })
+}
 
 export function getInfo() {
   // return request({
